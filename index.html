@@ -1189,7 +1189,6 @@
         .tiny {font-size:12px;color:var(--text-muted);}
         .danger-list li { color: var(--accent-red); margin-bottom: 6px;}
 
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
         .safety-banner {
             background: rgba(210,153,34,0.12);
             border: 1px solid var(--accent-amber);
@@ -1215,8 +1214,6 @@
             color: var(--text-secondary);
         }
 
-=======
->>>>>>> main
         /* ==================== UTILITY CLASSES ==================== */
         .hidden { display: none !important; }
         .text-accent { color: var(--accent-blue); }
@@ -2299,7 +2296,6 @@
                     <p class="section-desc">Расширение платформы до международного формата clinical decision support system</p>
                 </div>
 
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
                 <div class="safety-banner">
                     <div class="safety-title">Clinical Safety Gate</div>
                     <div class="card-content">Этот раздел является CDSS-подсказкой и <strong>не заменяет клиническое решение врача</strong>.
@@ -2307,8 +2303,7 @@
                 </div>
 
 
-=======
->>>>>>> main
+
                 <div class="card">
                     <div class="card-title">🫀 EBVM + RECOVER: интерактивный алгоритм СЛР</div>
                     <div class="card-content">
@@ -2352,10 +2347,7 @@
                             <select class="qs-select" id="abFocus"><option value="uti">Мочевые пути</option><option value="skin">Кожа/мягкие ткани</option><option value="resp">Респираторный</option></select>
                             <label class="qs-label mt-2">Тяжесть</label>
                             <select class="qs-select" id="abSeverity"><option value="mild">Лёгкая</option><option value="moderate">Средняя</option><option value="severe">Тяжёлая</option></select>
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-                            <div class="safety-check"><input type="checkbox" id="abSafety"> <label for="abSafety">Подтверждаю: посев взят/планируется, de-escalation через 48-72 ч.</label></div>
-=======
->>>>>>> main
+
                             <button class="calc-btn" onclick="buildEmpiricPlan()">Рассчитать эмпирический план</button>
                             <div class="tiny mt-2" id="abPlan">Выберите параметры для подсказки и деэскалации через 48-72ч.</div>
                         </div>
@@ -2365,20 +2357,14 @@
                             <input type="range" min="0" max="10" value="4" id="acutePain">
                             <div class="range-row"><label class="qs-label">Хроническая боль</label><span id="chronicPainVal">3/10</span></div>
                             <input type="range" min="0" max="10" value="3" id="chronicPain">
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-                            <div class="safety-check"><input type="checkbox" id="painSafety"> <label for="painSafety">Проверены противопоказания к НПВП/опиоидам и лекарственные взаимодействия.</label></div>
-=======
->>>>>>> main
+
                             <div class="tiny mt-2" id="painPlan">Рекомендуется мультимодальная схема с ежедневной переоценкой.</div>
                         </div>
                         <div class="module-card">
                             <h4>Эндокринология</h4>
                             <label class="qs-label">Глюкоза (ммоль/л)</label><input class="qs-input" type="number" id="endoGlucose" value="18">
                             <label class="qs-label mt-2">Масса (кг)</label><input class="qs-input" type="number" id="endoWeight" value="6">
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-                            <div class="safety-check"><input type="checkbox" id="endoSafety"> <label for="endoSafety">Подтверждаю: есть план мониторинга глюкозы/электролитов и клинического статуса.</label></div>
-=======
->>>>>>> main
+
                             <button class="calc-btn" onclick="calcInsulinDose()">Стартовая доза инсулина</button>
                             <div class="tiny mt-2" id="insulinResult">Ожидаемый диапазон будет показан здесь.</div>
                         </div>
@@ -2421,10 +2407,7 @@
                             <h4>Триаж/дифференциалы</h4>
                             <label class="qs-label">Симптом</label>
                             <select class="qs-select" id="symptomSearch"><option value="vomit">Рвота</option><option value="polyuria">Полиурия/полидипсия</option><option value="collapse">Коллапс</option><option value="dyspnea">Одышка</option></select>
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-                            <div class="safety-check"><input type="checkbox" id="ddxSafety"> <label for="ddxSafety">Понимаю: DDx носит вероятностный характер и не заменяет диагностику.</label></div>
-=======
->>>>>>> main
+
                             <button class="calc-btn" onclick="buildDifferentials()">Показать DDx + приоритет</button>
                             <div class="tiny mt-2" id="ddxResult">Список формируется с режимом triage-first.</div>
                         </div>
@@ -3422,7 +3405,9 @@
             
             // Показать контент
             const data = electrolyteData[ion];
-            document.getElementById('electrolyteContent').innerHTML = `
+            const contentEl = document.getElementById('electrolyteContent');
+            if (!data || !contentEl) return;
+            contentEl.innerHTML = `
                 <div class="section-header">
                     <h2 class="section-title">${data.title}</h2>
                 </div>
@@ -3492,6 +3477,7 @@
             const answer = caseAnswers[caseNum];
             const options = document.querySelectorAll(`#case${caseNum}Options .case-option`);
             const feedback = document.getElementById(`case${caseNum}Feedback`);
+            if (!answer || !feedback || options.length === 0 || !options[optionIndex]) return;
             
             // Сброс стилей
             options.forEach(o => {
@@ -3589,16 +3575,9 @@
         }
 
         function buildEmpiricPlan(){
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-            const safety = document.getElementById('abSafety');
-            if (safety && !safety.checked) {
-                document.getElementById('abPlan').textContent = 'Сначала подтвердите safety-check (посев/деэскалация), затем формируйте эмпирический план.';
-                return;
-            }
-=======
->>>>>>> main
             const focus = document.getElementById('abFocus').value;
             const sev = document.getElementById('abSeverity').value;
+
             const map = {
                 uti: 'UTI-map: E.coli ~72% чувствит. к амокси/клав, ESBL-risk при рецидивах.',
                 skin: 'Skin-map: стафилококки; избегать фторхинолонов первой линии без посева.',
@@ -3609,18 +3588,11 @@
         }
 
         function calcInsulinDose(){
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-            const safety = document.getElementById('endoSafety');
-            if (safety && !safety.checked) {
-                document.getElementById('insulinResult').textContent = 'Сначала подтвердите safety-check по мониторингу; калькулятор не заменяет протокол ICU.';
-                return;
-            }
-=======
->>>>>>> main
             const g = parseFloat(document.getElementById('endoGlucose').value) || 0;
             const w = parseFloat(document.getElementById('endoWeight').value) || 0;
             const base = Math.max(0.1, Math.min(0.25, g/100));
             document.getElementById('insulinResult').textContent = `Рекомендуемый старт: ${base.toFixed(2)} Ед/кг, ориентировочно ${(base*w).toFixed(2)} Ед на пациента. Контроль глюкозы q1-2ч.`;
+
         }
 
         function stageCKD(){
@@ -3645,15 +3617,8 @@
         }
 
         function buildDifferentials(){
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
-            const safety = document.getElementById('ddxSafety');
-            if (safety && !safety.checked) {
-                document.getElementById('ddxResult').textContent = 'Подтвердите safety-check: DDx — это ориентир, не финальный диагноз.';
-                return;
-            }
-=======
->>>>>>> main
             const v = document.getElementById('symptomSearch').value;
+
             const ddx = {
                 vomit: 'DDx: гастроэнтерит, панкреатит, обструкция, гипоадренокортицизм. Триаж: перфузия + глюкоза + электролиты.',
                 polyuria: 'DDx: ХБП, диабет, HAC, пиометра, психогенная ПП. Триаж: USG + глюкоза + Na/K.',
@@ -3678,7 +3643,6 @@
             const paint = () => {
                 document.getElementById('acutePainVal').textContent = `${acute.value}/10`;
                 document.getElementById('chronicPainVal').textContent = `${chronic.value}/10`;
-<<<<<<< codex/enhance-veterinary-medicine-website-features-058isp
                 const safety = document.getElementById('painSafety');
                 if (safety && !safety.checked) {
                     document.getElementById('painPlan').textContent = 'Сначала подтвердите safety-check (противопоказания/взаимодействия).';
@@ -3686,10 +3650,9 @@
                     const maxPain = Math.max(+acute.value,+chronic.value);
                     document.getElementById('painPlan').textContent = maxPain >= 7 ? 'Высокая боль: опиоид + НПВП (если нет противопоказаний) + регионарная техника.' : maxPain >=4 ? 'Умеренная боль: мультимодальная схема, контроль каждые 6-8ч.' : 'Низкая боль: step-down стратегия и мониторинг побочных эффектов.';
                 }
-=======
                 const maxPain = Math.max(+acute.value,+chronic.value);
                 document.getElementById('painPlan').textContent = maxPain >= 7 ? 'Высокая боль: опиоид + НПВП (если нет противопоказаний) + регионарная техника.' : maxPain >=4 ? 'Умеренная боль: мультимодальная схема, контроль каждые 6-8ч.' : 'Низкая боль: step-down стратегия и мониторинг побочных эффектов.';
->>>>>>> main
+
                 document.getElementById('bcsVal').textContent = `${bcs.value}/9`;
                 document.getElementById('mcsVal').textContent = `${mcs.value}/3`;
                 document.getElementById('bodyCompResult').textContent = (+bcs.value >= 7 ? 'Избыточный BCS: скорректируйте калорийность и нагрузку.' : +bcs.value <= 3 ? 'Низкий BCS: оценить кахексию/мальабсорбцию.' : 'BCS в целевом диапазоне.') + ' ' + (+mcs.value <= 1 ? 'Есть риск саркопении.' : 'Мышечная масса приемлемая.');
@@ -3718,7 +3681,7 @@
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
-        searchInput.addEventListener('input', (e) => {
+        if (searchInput && searchResults) searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             
             if (query.length < 2) {
@@ -3746,6 +3709,7 @@
 
         // Скрыть поиск при клике вне
         document.addEventListener('click', (e) => {
+            if (!searchResults) return;
             if (!e.target.closest('.search-box')) {
                 searchResults.classList.remove('show');
             }

@@ -1,0 +1,31 @@
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*.pdfsync
+
+# PDF output
+*.pdf
+
+# Temporary files
+*.tmp
+*.temp
+
+# Editors
+*~
+\#*\#
+.swp
+.vscode/
+.idea/
+
+# Operating System Files
+.DS_Store
+Thumbs.db

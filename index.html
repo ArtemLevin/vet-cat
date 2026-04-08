@@ -2303,6 +2303,7 @@
                 </div>
 
 
+
                 <div class="card">
                     <div class="card-title">🫀 EBVM + RECOVER: интерактивный алгоритм СЛР</div>
                     <div class="card-content">
@@ -2346,7 +2347,7 @@
                             <select class="qs-select" id="abFocus"><option value="uti">Мочевые пути</option><option value="skin">Кожа/мягкие ткани</option><option value="resp">Респираторный</option></select>
                             <label class="qs-label mt-2">Тяжесть</label>
                             <select class="qs-select" id="abSeverity"><option value="mild">Лёгкая</option><option value="moderate">Средняя</option><option value="severe">Тяжёлая</option></select>
-                            <div class="safety-check"><input type="checkbox" id="abSafety"> <label for="abSafety">Подтверждаю: посев взят/планируется, de-escalation через 48-72 ч.</label></div>
+
                             <button class="calc-btn" onclick="buildEmpiricPlan()">Рассчитать эмпирический план</button>
                             <div class="tiny mt-2" id="abPlan">Выберите параметры для подсказки и деэскалации через 48-72ч.</div>
                         </div>
@@ -2356,14 +2357,14 @@
                             <input type="range" min="0" max="10" value="4" id="acutePain">
                             <div class="range-row"><label class="qs-label">Хроническая боль</label><span id="chronicPainVal">3/10</span></div>
                             <input type="range" min="0" max="10" value="3" id="chronicPain">
-                            <div class="safety-check"><input type="checkbox" id="painSafety"> <label for="painSafety">Проверены противопоказания к НПВП/опиоидам и лекарственные взаимодействия.</label></div>
+
                             <div class="tiny mt-2" id="painPlan">Рекомендуется мультимодальная схема с ежедневной переоценкой.</div>
                         </div>
                         <div class="module-card">
                             <h4>Эндокринология</h4>
                             <label class="qs-label">Глюкоза (ммоль/л)</label><input class="qs-input" type="number" id="endoGlucose" value="18">
                             <label class="qs-label mt-2">Масса (кг)</label><input class="qs-input" type="number" id="endoWeight" value="6">
-                            <div class="safety-check"><input type="checkbox" id="endoSafety"> <label for="endoSafety">Подтверждаю: есть план мониторинга глюкозы/электролитов и клинического статуса.</label></div>
+
                             <button class="calc-btn" onclick="calcInsulinDose()">Стартовая доза инсулина</button>
                             <div class="tiny mt-2" id="insulinResult">Ожидаемый диапазон будет показан здесь.</div>
                         </div>
@@ -2406,7 +2407,7 @@
                             <h4>Триаж/дифференциалы</h4>
                             <label class="qs-label">Симптом</label>
                             <select class="qs-select" id="symptomSearch"><option value="vomit">Рвота</option><option value="polyuria">Полиурия/полидипсия</option><option value="collapse">Коллапс</option><option value="dyspnea">Одышка</option></select>
-                            <div class="safety-check"><input type="checkbox" id="ddxSafety"> <label for="ddxSafety">Понимаю: DDx носит вероятностный характер и не заменяет диагностику.</label></div>
+
                             <button class="calc-btn" onclick="buildDifferentials()">Показать DDx + приоритет</button>
                             <div class="tiny mt-2" id="ddxResult">Список формируется с режимом triage-first.</div>
                         </div>
@@ -3570,46 +3571,28 @@
             const steps = document.getElementById('recoverSteps');
             if(!steps) return;
             steps.innerHTML = recoverFlow.map((item,idx)=>`<button class="step-btn ${idx===active?'active':''}" onclick="renderRecoverFlow(${idx})">${idx+1}. ${item.step}</button>`).join('');
-            const out = document.getElementById('recoverOutput');
-            if (!out) return;
-            out.innerHTML = `<strong>${recoverFlow[active].step}</strong><p class="mt-2">${recoverFlow[active].text}</p><p class="tiny mt-2">Подсказка: фиксируйте EtCO₂, ротацию компрессора и тайминг лекарств.</p>`;
+            document.getElementById('recoverOutput').innerHTML = `<strong>${recoverFlow[active].step}</strong><p class="mt-2">${recoverFlow[active].text}</p><p class="tiny mt-2">Подсказка: фиксируйте EtCO₂, ротацию компрессора и тайминг лекарств.</p>`;
         }
 
         function buildEmpiricPlan(){
-            const planEl = document.getElementById('abPlan');
-            const focusEl = document.getElementById('abFocus');
-            const sevEl = document.getElementById('abSeverity');
-            if (!planEl || !focusEl || !sevEl) return;
-            const safety = document.getElementById('abSafety');
-            if (safety && !safety.checked) {
-                planEl.textContent = 'Сначала подтвердите safety-check (посев/деэскалация), затем формируйте эмпирический план.';
-                return;
-            }
-            const focus = focusEl.value;
-            const sev = sevEl.value;
+            const focus = document.getElementById('abFocus').value;
+            const sev = document.getElementById('abSeverity').value;
+
             const map = {
                 uti: 'UTI-map: E.coli ~72% чувствит. к амокси/клав, ESBL-risk при рецидивах.',
                 skin: 'Skin-map: стафилококки; избегать фторхинолонов первой линии без посева.',
                 resp: 'Resp-map: учитывать Bordetella/Mycoplasma, при тяжёлом течении старт с шире покрытия.'
             };
             const plan = sev === 'severe' ? 'Старт: парентерально, взять посев ДО первой дозы, пересмотр через 24-48ч.' : 'Старт: перорально/step-up, обязательная de-escalation при ответе.';
-            planEl.textContent = `${map[focus]} ${plan}`;
+            document.getElementById('abPlan').textContent = `${map[focus]} ${plan}`;
         }
 
         function calcInsulinDose(){
-            const resultEl = document.getElementById('insulinResult');
-            const glucoseEl = document.getElementById('endoGlucose');
-            const weightEl = document.getElementById('endoWeight');
-            if (!resultEl || !glucoseEl || !weightEl) return;
-            const safety = document.getElementById('endoSafety');
-            if (safety && !safety.checked) {
-                resultEl.textContent = 'Сначала подтвердите safety-check по мониторингу; калькулятор не заменяет протокол ICU.';
-                return;
-            }
-            const g = parseFloat(glucoseEl.value) || 0;
-            const w = parseFloat(weightEl.value) || 0;
+            const g = parseFloat(document.getElementById('endoGlucose').value) || 0;
+            const w = parseFloat(document.getElementById('endoWeight').value) || 0;
             const base = Math.max(0.1, Math.min(0.25, g/100));
-            resultEl.textContent = `Рекомендуемый старт: ${base.toFixed(2)} Ед/кг, ориентировочно ${(base*w).toFixed(2)} Ед на пациента. Контроль глюкозы q1-2ч.`;
+            document.getElementById('insulinResult').textContent = `Рекомендуемый старт: ${base.toFixed(2)} Ед/кг, ориентировочно ${(base*w).toFixed(2)} Ед на пациента. Контроль глюкозы q1-2ч.`;
+
         }
 
         function stageCKD(){
@@ -3634,22 +3617,15 @@
         }
 
         function buildDifferentials(){
-            const resultEl = document.getElementById('ddxResult');
-            const symptomEl = document.getElementById('symptomSearch');
-            if (!resultEl || !symptomEl) return;
-            const safety = document.getElementById('ddxSafety');
-            if (safety && !safety.checked) {
-                resultEl.textContent = 'Подтвердите safety-check: DDx — это ориентир, не финальный диагноз.';
-                return;
-            }
-            const v = symptomEl.value;
+            const v = document.getElementById('symptomSearch').value;
+
             const ddx = {
                 vomit: 'DDx: гастроэнтерит, панкреатит, обструкция, гипоадренокортицизм. Триаж: перфузия + глюкоза + электролиты.',
                 polyuria: 'DDx: ХБП, диабет, HAC, пиометра, психогенная ПП. Триаж: USG + глюкоза + Na/K.',
                 collapse: 'DDx: аритмия, кровопотеря, Addison crisis, тромбоэмболия. Триаж: ABC, ЭКГ, PCV/TS, лактат.',
                 dyspnea: 'DDx: отёк лёгких, астма, плевральный выпот, тромбоэмболия. Триаж: кислород, POCUS, минимальный стресс.'
             };
-            resultEl.textContent = ddx[v];
+            document.getElementById('ddxResult').textContent = ddx[v];
         }
 
         function generateOwnerLeaflet(){
@@ -3674,6 +3650,9 @@
                     const maxPain = Math.max(+acute.value,+chronic.value);
                     document.getElementById('painPlan').textContent = maxPain >= 7 ? 'Высокая боль: опиоид + НПВП (если нет противопоказаний) + регионарная техника.' : maxPain >=4 ? 'Умеренная боль: мультимодальная схема, контроль каждые 6-8ч.' : 'Низкая боль: step-down стратегия и мониторинг побочных эффектов.';
                 }
+                const maxPain = Math.max(+acute.value,+chronic.value);
+                document.getElementById('painPlan').textContent = maxPain >= 7 ? 'Высокая боль: опиоид + НПВП (если нет противопоказаний) + регионарная техника.' : maxPain >=4 ? 'Умеренная боль: мультимодальная схема, контроль каждые 6-8ч.' : 'Низкая боль: step-down стратегия и мониторинг побочных эффектов.';
+
                 document.getElementById('bcsVal').textContent = `${bcs.value}/9`;
                 document.getElementById('mcsVal').textContent = `${mcs.value}/3`;
                 document.getElementById('bodyCompResult').textContent = (+bcs.value >= 7 ? 'Избыточный BCS: скорректируйте калорийность и нагрузку.' : +bcs.value <= 3 ? 'Низкий BCS: оценить кахексию/мальабсорбцию.' : 'BCS в целевом диапазоне.') + ' ' + (+mcs.value <= 1 ? 'Есть риск саркопении.' : 'Мышечная масса приемлемая.');

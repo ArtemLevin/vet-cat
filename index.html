@@ -1448,16 +1448,16 @@
                                 <input type="number" class="qs-input alg-input" id="algMg" step="0.1">
                             </div>
                             <div class="qs-field">
-                                <label class="qs-label">P (ммоль/л)</label>
-                                <input type="number" class="qs-input alg-input" id="algP" step="0.1">
+                                <label class="qs-label" id="algPLabel">P (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algP" step="0.1" data-unit="phosphorus">
                             </div>
                             <div class="qs-field">
-                                <label class="qs-label">Глюкоза (ммоль/л)</label>
-                                <input type="number" class="qs-input alg-input" id="algGlucose" step="0.1">
+                                <label class="qs-label" id="algGlucoseLabel">Глюкоза (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algGlucose" step="0.1" data-unit="glucose">
                             </div>
                             <div class="qs-field">
-                                <label class="qs-label">Креатинин (мкмоль/л)</label>
-                                <input type="number" class="qs-input alg-input" id="algCreatinine" step="1">
+                                <label class="qs-label" id="algCreatinineLabel">Креатинин (мкмоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algCreatinine" step="1" data-unit="creatinine">
                             </div>
                             <div class="qs-field">
                                 <label class="qs-label">pH</label>
@@ -2881,8 +2881,27 @@
             document.getElementById('patientPanel').classList.toggle('expanded');
         }
 
+
+        function validateAlgorithmInputs() {
+            const issues = [];
+            const w = parseFloat(document.getElementById('algWeight').value);
+            const na = parseFloat(document.getElementById('algNa').value);
+            const k = parseFloat(document.getElementById('algK').value);
+            const cr = parseFloat(document.getElementById('algCreatinine').value);
+            if (!w || w < 0.3 || w > 120) issues.push('Вес вне допустимого диапазона (0.3-120 кг).');
+            if (!Number.isNaN(na) && na && (na < 100 || na > 200)) issues.push('Na вне физиологичного диапазона (100-200).');
+            if (!Number.isNaN(k) && k && (k < 1.5 || k > 12)) issues.push('K вне физиологичного диапазона (1.5-12).');
+            if (!Number.isNaN(cr) && cr && cr < 0) issues.push('Креатинин не может быть отрицательным.');
+            return issues;
+        }
+
         // ==================== АЛГОРИТМ ====================
         function runAlgorithm() {
+            const issues = validateAlgorithmInputs();
+            if (issues.length) {
+                alert('Проверьте ввод:\n- ' + issues.join('\n- '));
+                return;
+            }
             // Сбор данных
             state.patient.species = document.getElementById('algSpecies').value;
             state.patient.weight = parseFloat(document.getElementById('algWeight').value);
@@ -2906,9 +2925,9 @@
                 cl: parseFloat(document.getElementById('algCl').value) || null,
                 ca: parseFloat(document.getElementById('algCa').value) || null,
                 mg: parseFloat(document.getElementById('algMg').value) || null,
-                p: parseFloat(document.getElementById('algP').value) || null,
-                glucose: parseFloat(document.getElementById('algGlucose').value) || null,
-                creatinine: parseFloat(document.getElementById('algCreatinine').value) || null,
+                p: (() => { const v = parseFloat(document.getElementById('algP').value); return v ? (state.units === 'si' ? v : v / 3.1) : null; })(),
+                glucose: (() => { const v = parseFloat(document.getElementById('algGlucose').value); return v ? (state.units === 'si' ? v : v / 18) : null; })(),
+                creatinine: (() => { const v = parseFloat(document.getElementById('algCreatinine').value); return v ? (state.units === 'si' ? v : v * 88.4) : null; })(),
                 ph: parseFloat(document.getElementById('algPh').value) || null,
                 hco3: parseFloat(document.getElementById('algHco3').value) || null
             };

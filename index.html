@@ -1125,6 +1125,95 @@
             }
         }
 
+
+
+        /* ==================== ADVANCED CDSS ==================== */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .module-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 14px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-right: 6px;
+        }
+
+        .badge.a { background: rgba(63,185,80,.2); color: var(--accent-green);}
+        .badge.b { background: rgba(210,153,34,.2); color: var(--accent-amber);}
+        .badge.c { background: rgba(248,81,73,.2); color: var(--accent-red);}
+
+        .stepper {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .step-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 10px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .step-btn.active {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            background: rgba(88,166,255,.12);
+        }
+
+        .range-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .tiny {font-size:12px;color:var(--text-muted);}
+        .danger-list li { color: var(--accent-red); margin-bottom: 6px;}
+
+        .safety-banner {
+            background: rgba(210,153,34,0.12);
+            border: 1px solid var(--accent-amber);
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+
+        .safety-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--accent-amber);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .safety-check {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         /* ==================== UTILITY CLASSES ==================== */
         .hidden { display: none !important; }
         .text-accent { color: var(--accent-blue); }
@@ -1153,6 +1242,7 @@
             <button class="nav-btn" data-section="pocus"><span>POCUS</span></button>
             <button class="nav-btn" data-section="overload"><span>Перегрузка</span></button>
             <button class="nav-btn" data-section="cheatsheet"><span>Шпаргалка</span></button>
+            <button class="nav-btn" data-section="cdss"><span>CDSS+</span></button>
         </div>
         <div class="nav-right">
             <div class="search-box">
@@ -1182,6 +1272,7 @@
             <button class="hero-btn secondary" onclick="navigateTo('calculators')">Калькуляторы</button>
             <button class="hero-btn secondary" onclick="navigateTo('cases')">Клинические кейсы</button>
             <button class="hero-btn secondary" onclick="navigateTo('cheatsheet')">Шпаргалка</button>
+            <button class="hero-btn secondary" onclick="navigateTo('cdss')">CDSS 2.0</button>
         </div>
     </section>
 
@@ -1259,6 +1350,7 @@
                         <p class="mt-2"><strong>Режим обучения</strong> — полная патофизиология, объяснения логики решений, развёрнутые тексты и схемы. Подходит для углублённого изучения.</p>
                     </div>
                 </div>
+
             </section>
 
             <!-- Секция: Алгоритм -->
@@ -1727,12 +1819,12 @@
                 </div>
 
                 <div class="electrolyte-tabs">
-                    <button class="elyte-tab active" onclick="showElectrolyte('na')">Na⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('k')">K⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('cl')">Cl⁻</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('ca')">Ca²⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('mg')">Mg²⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('p')">P</button>
+                    <button class="elyte-tab active" data-ion="na" onclick="showElectrolyte('na', this)">Na⁺</button>
+                    <button class="elyte-tab" data-ion="k" onclick="showElectrolyte('k', this)">K⁺</button>
+                    <button class="elyte-tab" data-ion="cl" onclick="showElectrolyte('cl', this)">Cl⁻</button>
+                    <button class="elyte-tab" data-ion="ca" onclick="showElectrolyte('ca', this)">Ca²⁺</button>
+                    <button class="elyte-tab" data-ion="mg" onclick="showElectrolyte('mg', this)">Mg²⁺</button>
+                    <button class="elyte-tab" data-ion="p" onclick="showElectrolyte('p', this)">P</button>
                 </div>
 
                 <div id="electrolyteContent">
@@ -1881,6 +1973,15 @@
                     <p class="section-desc">Интерактивные кейсы для отработки клинического мышления</p>
                 </div>
 
+                <div class="card">
+                    <div class="card-title">🎓 Траектория сложности</div>
+                    <div class="card-content">
+                        <p><strong>Кейсы 1-2:</strong> базовые неотложные решения.</p>
+                        <p class="mt-2"><strong>Кейсы 3-4:</strong> комплексная интерпретация электролитов и кислотно-основного состояния.</p>
+                        <p class="mt-2"><strong>Кейсы 5-6:</strong> ICU-уровень, динамика, осложнения и приоритеты в условиях неполной информации.</p>
+                    </div>
+                </div>
+
                 <!-- Кейс 1 -->
                 <div class="case-card">
                     <div class="case-header">
@@ -1966,6 +2067,80 @@
                                 <div class="case-option" onclick="selectCaseOption(3, 3)">D) Гипотонический раствор для восполнения воды</div>
                             </div>
                             <div class="case-feedback" id="case3Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Кейс 4 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐈 Кошка с ДКА и падающим фосфором (intermediate)</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Старт</div>
+                            <p>Кошка, 7 лет, 4.2 кг. Диабет ранее не диагностирован. Дегидратация 9%, кетонурия +++, глюкоза 29 ммоль/л.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Через 8 часов терапии</div>
+                            <p>Глюкоза 14 ммоль/л, K⁺ 3.4 ммоль/л, P 0.55 ммоль/л, выраженная слабость и тахипноэ. Гемолиз по мазку.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Приоритетный следующий шаг?</div>
+                            <div class="case-options" id="case4Options">
+                                <div class="case-option" onclick="selectCaseOption(4, 0)">A) Продолжить текущий инсулин без изменений, фосфор пересмотреть завтра</div>
+                                <div class="case-option" onclick="selectCaseOption(4, 1)">B) Добавить фосфат в инфузию, скорректировать K⁺ и продолжить частый мониторинг</div>
+                                <div class="case-option" onclick="selectCaseOption(4, 2)">C) Остановить инсулин на 12 часов до нормализации фосфора</div>
+                                <div class="case-option" onclick="selectCaseOption(4, 3)">D) Немедленно перелить кровь без коррекции электролитов</div>
+                            </div>
+                            <div class="case-feedback" id="case4Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 5 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐕 Септический пациент в ОРИТ: гипотензия + риск перегрузки (advanced)</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Ситуация</div>
+                            <p>Собака 28 кг после операции по поводу пиометры. MAP 54 мм рт.ст., лактат 5.1, тахикардия 170/мин. После 20 мл/кг кристаллоидов появились B-lines на TFAST и влажные хрипы.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Лучшее решение сейчас?</div>
+                            <div class="case-options" id="case5Options">
+                                <div class="case-option" onclick="selectCaseOption(5, 0)">A) Дать ещё 30 мл/кг кристаллоидов для достижения MAP &gt;65</div>
+                                <div class="case-option" onclick="selectCaseOption(5, 1)">B) Перейти на вазопрессор, ограничить дальнейшие болюсы, продолжить динамический мониторинг перфузии</div>
+                                <div class="case-option" onclick="selectCaseOption(5, 2)">C) Немедленно назначить высокую дозу фуросемида без оценки перфузии</div>
+                                <div class="case-option" onclick="selectCaseOption(5, 3)">D) Прекратить всю поддержку до повторных анализов через 6 часов</div>
+                            </div>
+                            <div class="case-feedback" id="case5Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 6 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐱 ХБП + сердечный риск: уремия, гипертензия и олигурия (expert)</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Исходные данные</div>
+                            <p>Кошка 13 лет, известная ХБП. Сейчас: креатинин 4.9 мг/дл, фосфор 2.4 ммоль/л, САД 185 мм рт.ст., олигурия, умеренная одышка, POCUS: небольшой плевральный выпот.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Оптимальная тактика первых часов?</div>
+                            <div class="case-options" id="case6Options">
+                                <div class="case-option" onclick="selectCaseOption(6, 0)">A) Агрессивная инфузия 10 мл/кг/ч до восстановления диуреза</div>
+                                <div class="case-option" onclick="selectCaseOption(6, 1)">B) Индивидуальный консервативный план: осторожная коррекция объёма, контроль АД, фосфора и дыхания, частая переоценка</div>
+                                <div class="case-option" onclick="selectCaseOption(6, 2)">C) Только гипотензивная терапия, инфузию отменить полностью</div>
+                                <div class="case-option" onclick="selectCaseOption(6, 3)">D) Немедленно бикарбонат всем пациентам с ХБП</div>
+                            </div>
+                            <div class="case-feedback" id="case6Feedback"></div>
                         </div>
                     </div>
                 </div>
@@ -2110,6 +2285,131 @@
                             <li><strong>Сепсис</strong> — повышенная проницаемость капилляров;</li>
                             <li><strong>Очень мелкие животные</strong> — малый объём распределения.</li>
                         </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: CDSS 2.0 -->
+            <section class="section" id="cdss">
+                <div class="section-header">
+                    <h1 class="section-title">CDSS 2.0: доказательная клиническая поддержка</h1>
+                    <p class="section-desc">Расширение платформы до международного формата clinical decision support system</p>
+                </div>
+
+                <div class="safety-banner">
+                    <div class="safety-title">Clinical Safety Gate</div>
+                    <div class="card-content">Этот раздел является CDSS-подсказкой и <strong>не заменяет клиническое решение врача</strong>.
+                    Все рекомендации должны быть проверены с учетом вида пациента, противопоказаний, сопутствующих болезней и локальных протоколов клиники.</div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-title">🫀 EBVM + RECOVER: интерактивный алгоритм СЛР</div>
+                    <div class="card-content">
+                        <p>Алгоритм построен как цикл <strong>Prepare → Basic Life Support → Advanced Life Support → Post-ROSC</strong> с приоритетом на минимизацию пауз компрессий и чек-лист командной коммуникации.</p>
+                        <div class="stepper" id="recoverSteps"></div>
+                        <div class="module-card" id="recoverOutput"></div>
+                        <div class="warning-box mt-3">
+                            <div class="warning-title">Choosing Wisely: что НЕ делать</div>
+                            <div class="warning-text">
+                                <ul class="danger-list" style="margin-left:20px;">
+                                    <li>Не задерживать компрессии ради интубации или катетеризации.</li>
+                                    <li>Не давать рутинно жидкости при normovolemia во время CPR.</li>
+                                    <li>Не использовать эмпирически антибиотики без очага/риска сепсиса.</li>
+                                    <li>Не назначать «полипрагмазию» анальгетиков без пересмотра боли и побочных эффектов.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📚 Уровни доказательности протоколов</div>
+                    <div class="card-content">
+                        <table class="data-table">
+                            <tr><th>Модуль</th><th>Уровень</th><th>Ключевая база</th></tr>
+                            <tr><td>СЛР RECOVER</td><td><span class="badge a">A</span>Guideline-driven</td><td>RECOVER consensus + обновления CPR bundle</td></tr>
+                            <tr><td>Уретральная обструкция</td><td><span class="badge b">B</span>Observational</td><td>Retrospective ICU outcomes, electrolyte protocol studies</td></tr>
+                            <tr><td>Хроническая боль</td><td><span class="badge b">B</span>Moderate</td><td>FMPI/CBPI validated scales + multimodal analgesia reviews</td></tr>
+                            <tr><td>Гиперадренокортицизм</td><td><span class="badge b">B</span>Moderate</td><td>ACTH/LDDST comparative diagnostic performance</td></tr>
+                            <tr><td>Эмпирическая антибиотикотерапия</td><td><span class="badge c">C</span>Contextual</td><td>Локальная антибиотикограмма + de-escalation stewardship</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">💊 Терапевтические модули</div>
+                    <div class="module-grid">
+                        <div class="module-card">
+                            <h4>Антибиотики</h4>
+                            <label class="qs-label">Очаг</label>
+                            <select class="qs-select" id="abFocus"><option value="uti">Мочевые пути</option><option value="skin">Кожа/мягкие ткани</option><option value="resp">Респираторный</option></select>
+                            <label class="qs-label mt-2">Тяжесть</label>
+                            <select class="qs-select" id="abSeverity"><option value="mild">Лёгкая</option><option value="moderate">Средняя</option><option value="severe">Тяжёлая</option></select>
+                            <div class="safety-check"><input type="checkbox" id="abSafety"> <label for="abSafety">Подтверждаю: посев взят/планируется, de-escalation через 48-72 ч.</label></div>
+                            <button class="calc-btn" onclick="buildEmpiricPlan()">Рассчитать эмпирический план</button>
+                            <div class="tiny mt-2" id="abPlan">Выберите параметры для подсказки и деэскалации через 48-72ч.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>Обезболивание</h4>
+                            <div class="range-row"><label class="qs-label">Острая боль</label><span id="acutePainVal">4/10</span></div>
+                            <input type="range" min="0" max="10" value="4" id="acutePain">
+                            <div class="range-row"><label class="qs-label">Хроническая боль</label><span id="chronicPainVal">3/10</span></div>
+                            <input type="range" min="0" max="10" value="3" id="chronicPain">
+                            <div class="safety-check"><input type="checkbox" id="painSafety"> <label for="painSafety">Проверены противопоказания к НПВП/опиоидам и лекарственные взаимодействия.</label></div>
+                            <div class="tiny mt-2" id="painPlan">Рекомендуется мультимодальная схема с ежедневной переоценкой.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>Эндокринология</h4>
+                            <label class="qs-label">Глюкоза (ммоль/л)</label><input class="qs-input" type="number" id="endoGlucose" value="18">
+                            <label class="qs-label mt-2">Масса (кг)</label><input class="qs-input" type="number" id="endoWeight" value="6">
+                            <div class="safety-check"><input type="checkbox" id="endoSafety"> <label for="endoSafety">Подтверждаю: есть план мониторинга глюкозы/электролитов и клинического статуса.</label></div>
+                            <button class="calc-btn" onclick="calcInsulinDose()">Стартовая доза инсулина</button>
+                            <div class="tiny mt-2" id="insulinResult">Ожидаемый диапазон будет показан здесь.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>Нефро/урология</h4>
+                            <label class="qs-label">Креатинин (мг/дл)</label><input class="qs-input" type="number" id="ckdCreat" value="2.4" step="0.1">
+                            <label class="qs-label mt-2">UPC</label><input class="qs-input" type="number" id="ckdUpc" value="0.4" step="0.1">
+                            <label class="qs-label mt-2">САД (мм рт.ст.)</label><input class="qs-input" type="number" id="ckdBp" value="155">
+                            <button class="calc-btn" onclick="stageCKD()">IRIS-стадирование</button>
+                            <div class="tiny mt-2" id="ckdResult">Автоматическое стадирование и risk-tier после расчёта.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">🔬 Диагностика и коммуникация</div>
+                    <div class="module-grid">
+                        <div class="module-card">
+                            <h4>Лейкограмма</h4>
+                            <label class="qs-label">Нейтрофилы (×10⁹/л)</label><input class="qs-input" type="number" id="leukoNeu" value="14">
+                            <label class="qs-label mt-2">Палочкоядерные (%)</label><input class="qs-input" type="number" id="leukoBands" value="2">
+                            <label class="qs-label mt-2">Лимфоциты (×10⁹/л)</label><input class="qs-input" type="number" id="leukoLym" value="0.9">
+                            <button class="calc-btn" onclick="interpretLeukogram()">Интерпретировать</button>
+                            <div class="tiny mt-2" id="leukoResult">Автоинтерпретация с клинической оговоркой.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>BCS/MCS</h4>
+                            <div class="range-row"><label class="qs-label">BCS (1-9)</label><span id="bcsVal">5/9</span></div><input type="range" min="1" max="9" value="5" id="bcsSlider">
+                            <div class="range-row"><label class="qs-label">MCS (0-3)</label><span id="mcsVal">2/3</span></div><input type="range" min="0" max="3" value="2" id="mcsSlider">
+                            <div class="tiny mt-2" id="bodyCompResult">Нейтральный нутритивный профиль.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>Памятка владельцу</h4>
+                            <label class="qs-label">Диагноз</label><input class="qs-input" id="ownerDx" value="ХБП stage 2">
+                            <label class="qs-label mt-2">Ключевой риск без лечения</label><input class="qs-input" id="ownerRisk" value="дегидратация, уремия">
+                            <button class="calc-btn" onclick="generateOwnerLeaflet()">Сгенерировать памятку</button>
+                            <div class="tiny mt-2" id="ownerLeaflet">Текст появится здесь для копирования в выписку.</div>
+                        </div>
+                        <div class="module-card">
+                            <h4>Триаж/дифференциалы</h4>
+                            <label class="qs-label">Симптом</label>
+                            <select class="qs-select" id="symptomSearch"><option value="vomit">Рвота</option><option value="polyuria">Полиурия/полидипсия</option><option value="collapse">Коллапс</option><option value="dyspnea">Одышка</option></select>
+                            <div class="safety-check"><input type="checkbox" id="ddxSafety"> <label for="ddxSafety">Понимаю: DDx носит вероятностный характер и не заменяет диагностику.</label></div>
+                            <button class="calc-btn" onclick="buildDifferentials()">Показать DDx + приоритет</button>
+                            <div class="tiny mt-2" id="ddxResult">Список формируется с режимом triage-first.</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -3096,10 +3396,11 @@
             }
         };
 
-        function showElectrolyte(ion) {
+        function showElectrolyte(ion, tabEl = null) {
             // Обновить табы
             document.querySelectorAll('.elyte-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            const activeTab = tabEl || document.querySelector(`.elyte-tab[data-ion="${ion}"]`);
+            if (activeTab) activeTab.classList.add('active');
             
             // Показать контент
             const data = electrolyteData[ion];
@@ -3110,10 +3411,6 @@
                 ${data.content}
             `;
         }
-
-        // Инициализация первого электролита
-        showElectrolyte('na');
-        document.querySelector('.elyte-tab').classList.add('active');
 
         // ==================== КЕЙСЫ ====================
         const caseAnswers = {
@@ -3142,6 +3439,33 @@
                     1: 'Неверно. Сбалансированные растворы содержат меньше Cl⁻ и лактат, который метаболизируется в HCO₃⁻, усугубляя алкалоз.',
                     2: 'Неверно. Бикарбонат усугубит алкалоз. Нужно восполнять Cl⁻ и объём.',
                     3: 'Неверно. Гипотонические растворы опасны без контроля Na⁺ и не решают проблему Cl⁻.'
+                }
+            },
+            4: {
+                correct: 1,
+                feedback: {
+                    0: 'Неверно. Тяжёлая гипофосфатемия на фоне ДКА может приводить к гемолизу и дыхательной слабости; откладывать коррекцию нельзя.',
+                    1: 'Верно! Нужна своевременная коррекция фосфора и калия с продолжением контролируемой инсулинотерапии и частым мониторингом.',
+                    2: 'Неверно. Полная остановка инсулина ухудшит контроль ДКА; терапию корректируют, но не выключают без крайне веских причин.',
+                    3: 'Неверно. Переливание не является первым шагом без попытки адресной коррекции причины ухудшения.'
+                }
+            },
+            5: {
+                correct: 1,
+                feedback: {
+                    0: 'Неверно. Есть признаки жидкостной непереносимости (B-lines/хрипы), дополнительный большой болюс может ухудшить дыхание.',
+                    1: 'Верно! Это типичный переход к pressor-first стратегии при ограниченной fluid responsiveness и риске перегрузки.',
+                    2: 'Неверно. Диуретик без оценки перфузии может снизить preload и ухудшить шок.',
+                    3: 'Неверно. Отсрочка поддержки при септическом шоке повышает риск органной дисфункции.'
+                }
+            },
+            6: {
+                correct: 1,
+                feedback: {
+                    0: 'Неверно. Агрессивная инфузия у кошки с одышкой/выпотом и гипертензией рискованна и может усугубить состояние.',
+                    1: 'Верно! Здесь нужна осторожная, персонализированная стратегия с частой переоценкой и балансом риск-польза.',
+                    2: 'Неверно. Изолированное снижение АД без управления объёмом/уремией не решает системную проблему.',
+                    3: 'Неверно. Бикарбонат не является универсальным решением при ХБП и требует строгих показаний.'
                 }
             }
         };
@@ -3230,6 +3554,118 @@
             }
         }
 
+
+        // ==================== CDSS 2.0 ====================
+        const recoverFlow = [
+            {step:'Prepare', text:'Лидер команды, таймер 2 минуты, готовность компрессора/вентиляции/монитора, быстрый доступ к адреналину.'},
+            {step:'BLS', text:'Компрессии 100-120/мин, глубина 1/3 грудной клетки, паузы <10 сек, вентиляция после интубации 10 дых/мин.'},
+            {step:'ALS', text:'ECG-ритм каждые 2 мин, дефибрилляция при VF/pVT, адреналин q3-5 мин, обратимые причины (4H/4T).'},
+            {step:'Post-ROSC', text:'SpO₂ 94-98%, MAP > 65 мм рт.ст. (по виду), нормовентиляция, активный поиск причины остановки.'}
+        ];
+
+        function renderRecoverFlow(active=0){
+            const steps = document.getElementById('recoverSteps');
+            if(!steps) return;
+            steps.innerHTML = recoverFlow.map((item,idx)=>`<button class="step-btn ${idx===active?'active':''}" onclick="renderRecoverFlow(${idx})">${idx+1}. ${item.step}</button>`).join('');
+            document.getElementById('recoverOutput').innerHTML = `<strong>${recoverFlow[active].step}</strong><p class="mt-2">${recoverFlow[active].text}</p><p class="tiny mt-2">Подсказка: фиксируйте EtCO₂, ротацию компрессора и тайминг лекарств.</p>`;
+        }
+
+        function buildEmpiricPlan(){
+            const safety = document.getElementById('abSafety');
+            if (safety && !safety.checked) {
+                document.getElementById('abPlan').textContent = 'Сначала подтвердите safety-check (посев/деэскалация), затем формируйте эмпирический план.';
+                return;
+            }
+            const focus = document.getElementById('abFocus').value;
+            const sev = document.getElementById('abSeverity').value;
+            const map = {
+                uti: 'UTI-map: E.coli ~72% чувствит. к амокси/клав, ESBL-risk при рецидивах.',
+                skin: 'Skin-map: стафилококки; избегать фторхинолонов первой линии без посева.',
+                resp: 'Resp-map: учитывать Bordetella/Mycoplasma, при тяжёлом течении старт с шире покрытия.'
+            };
+            const plan = sev === 'severe' ? 'Старт: парентерально, взять посев ДО первой дозы, пересмотр через 24-48ч.' : 'Старт: перорально/step-up, обязательная de-escalation при ответе.';
+            document.getElementById('abPlan').textContent = `${map[focus]} ${plan}`;
+        }
+
+        function calcInsulinDose(){
+            const safety = document.getElementById('endoSafety');
+            if (safety && !safety.checked) {
+                document.getElementById('insulinResult').textContent = 'Сначала подтвердите safety-check по мониторингу; калькулятор не заменяет протокол ICU.';
+                return;
+            }
+            const g = parseFloat(document.getElementById('endoGlucose').value) || 0;
+            const w = parseFloat(document.getElementById('endoWeight').value) || 0;
+            const base = Math.max(0.1, Math.min(0.25, g/100));
+            document.getElementById('insulinResult').textContent = `Рекомендуемый старт: ${base.toFixed(2)} Ед/кг, ориентировочно ${(base*w).toFixed(2)} Ед на пациента. Контроль глюкозы q1-2ч.`;
+        }
+
+        function stageCKD(){
+            const cr = parseFloat(document.getElementById('ckdCreat').value) || 0;
+            const upc = parseFloat(document.getElementById('ckdUpc').value) || 0;
+            const bp = parseFloat(document.getElementById('ckdBp').value) || 0;
+            let stage = cr < 1.6 ? 'IRIS 1' : cr < 2.8 ? 'IRIS 2' : cr < 5.0 ? 'IRIS 3' : 'IRIS 4';
+            const prot = upc < 0.2 ? 'NP' : upc <= 0.5 ? 'BP' : 'P';
+            const press = bp < 140 ? 'минимальный' : bp < 160 ? 'низкий' : bp < 180 ? 'умеренный' : 'высокий';
+            document.getElementById('ckdResult').textContent = `${stage}, протеинурия ${prot}, риск TOD по АД: ${press}. Рассмотреть фосфат-биндеры, RAAS-блокаду и гидратационный план.`;
+        }
+
+        function interpretLeukogram(){
+            const n = parseFloat(document.getElementById('leukoNeu').value) || 0;
+            const b = parseFloat(document.getElementById('leukoBands').value) || 0;
+            const l = parseFloat(document.getElementById('leukoLym').value) || 0;
+            let txt = 'Без выраженной воспалительной картины.';
+            if(n > 12 && b >= 3) txt = 'Нейтрофилия со сдвигом влево: вероятно активное воспаление/сепсис (оценить токсические изменения).';
+            else if(n > 12 && l < 1) txt = 'Стресс-лейкограмма вероятна (кортизоловый профиль).';
+            else if(n < 3) txt = 'Нейтропения: исключать потребление/угнетение костного мозга, срочный контроль.';
+            document.getElementById('leukoResult').textContent = txt;
+        }
+
+        function buildDifferentials(){
+            const safety = document.getElementById('ddxSafety');
+            if (safety && !safety.checked) {
+                document.getElementById('ddxResult').textContent = 'Подтвердите safety-check: DDx — это ориентир, не финальный диагноз.';
+                return;
+            }
+            const v = document.getElementById('symptomSearch').value;
+            const ddx = {
+                vomit: 'DDx: гастроэнтерит, панкреатит, обструкция, гипоадренокортицизм. Триаж: перфузия + глюкоза + электролиты.',
+                polyuria: 'DDx: ХБП, диабет, HAC, пиометра, психогенная ПП. Триаж: USG + глюкоза + Na/K.',
+                collapse: 'DDx: аритмия, кровопотеря, Addison crisis, тромбоэмболия. Триаж: ABC, ЭКГ, PCV/TS, лактат.',
+                dyspnea: 'DDx: отёк лёгких, астма, плевральный выпот, тромбоэмболия. Триаж: кислород, POCUS, минимальный стресс.'
+            };
+            document.getElementById('ddxResult').textContent = ddx[v];
+        }
+
+        function generateOwnerLeaflet(){
+            const dx = document.getElementById('ownerDx').value.trim();
+            const risk = document.getElementById('ownerRisk').value.trim();
+            document.getElementById('ownerLeaflet').textContent = `У вашего питомца: ${dx}. Без лечения возрастает риск: ${risk}. Цель терапии — сохранить качество жизни, снизить риск экстренной госпитализации и контролировать симптомы дома.`;
+        }
+
+        function bindRangeOutputs(){
+            const acute = document.getElementById('acutePain');
+            const chronic = document.getElementById('chronicPain');
+            const bcs = document.getElementById('bcsSlider');
+            const mcs = document.getElementById('mcsSlider');
+            if(!acute) return;
+            const paint = () => {
+                document.getElementById('acutePainVal').textContent = `${acute.value}/10`;
+                document.getElementById('chronicPainVal').textContent = `${chronic.value}/10`;
+                const safety = document.getElementById('painSafety');
+                if (safety && !safety.checked) {
+                    document.getElementById('painPlan').textContent = 'Сначала подтвердите safety-check (противопоказания/взаимодействия).';
+                } else {
+                    const maxPain = Math.max(+acute.value,+chronic.value);
+                    document.getElementById('painPlan').textContent = maxPain >= 7 ? 'Высокая боль: опиоид + НПВП (если нет противопоказаний) + регионарная техника.' : maxPain >=4 ? 'Умеренная боль: мультимодальная схема, контроль каждые 6-8ч.' : 'Низкая боль: step-down стратегия и мониторинг побочных эффектов.';
+                }
+                document.getElementById('bcsVal').textContent = `${bcs.value}/9`;
+                document.getElementById('mcsVal').textContent = `${mcs.value}/3`;
+                document.getElementById('bodyCompResult').textContent = (+bcs.value >= 7 ? 'Избыточный BCS: скорректируйте калорийность и нагрузку.' : +bcs.value <= 3 ? 'Низкий BCS: оценить кахексию/мальабсорбцию.' : 'BCS в целевом диапазоне.') + ' ' + (+mcs.value <= 1 ? 'Есть риск саркопении.' : 'Мышечная масса приемлемая.');
+            };
+            [acute,chronic,bcs,mcs].forEach(el=>el.addEventListener('input',paint));
+            paint();
+        }
+
         // ==================== ПОИСК ====================
         const searchIndex = [
             { title: 'Гипоперфузия', section: 'guide', desc: 'Признаки, лечение, ресусцитация' },
@@ -3241,7 +3677,10 @@
             { title: 'POCUS', section: 'pocus', desc: 'AFAST, TFAST, CPOCUS, УЗИ' },
             { title: 'Гипокальциемия', section: 'guide', desc: 'Эклампсия, тетания, iCa' },
             { title: 'Anion Gap', section: 'calculators', desc: 'Расчёт AG, лактат-ацидоз' },
-            { title: 'Хлор', section: 'guide', desc: 'Гипохлоремия, алкалоз, 0.9% NaCl' }
+            { title: 'Хлор', section: 'guide', desc: 'Гипохлоремия, алкалоз, 0.9% NaCl' },
+            { title: 'RECOVER CPR', section: 'cdss', desc: 'Алгоритм реанимации, post-ROSC' },
+            { title: 'Choosing Wisely', section: 'cdss', desc: 'Что не нужно делать' },
+            { title: 'IRIS стадирование', section: 'cdss', desc: 'Автоматическое CKD стадирование' }
         ];
 
         const searchInput = document.getElementById('searchInput');
@@ -3302,6 +3741,13 @@
         
         // Инициализировать панель пациента
         updatePatientPanel();
+        renderRecoverFlow();
+        bindRangeOutputs();
+        buildEmpiricPlan();
+        calcInsulinDose();
+        stageCKD();
+        interpretLeukogram();
+        buildDifferentials();
     </script>
 </body>
 </html>

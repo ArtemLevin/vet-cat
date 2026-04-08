@@ -1793,12 +1793,12 @@
                 </div>
 
                 <div class="electrolyte-tabs">
-                    <button class="elyte-tab active" onclick="showElectrolyte('na')">Na⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('k')">K⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('cl')">Cl⁻</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('ca')">Ca²⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('mg')">Mg²⁺</button>
-                    <button class="elyte-tab" onclick="showElectrolyte('p')">P</button>
+                    <button class="elyte-tab active" data-ion="na" onclick="showElectrolyte('na', this)">Na⁺</button>
+                    <button class="elyte-tab" data-ion="k" onclick="showElectrolyte('k', this)">K⁺</button>
+                    <button class="elyte-tab" data-ion="cl" onclick="showElectrolyte('cl', this)">Cl⁻</button>
+                    <button class="elyte-tab" data-ion="ca" onclick="showElectrolyte('ca', this)">Ca²⁺</button>
+                    <button class="elyte-tab" data-ion="mg" onclick="showElectrolyte('mg', this)">Mg²⁺</button>
+                    <button class="elyte-tab" data-ion="p" onclick="showElectrolyte('p', this)">P</button>
                 </div>
 
                 <div id="electrolyteContent">
@@ -3276,10 +3276,11 @@
             }
         };
 
-        function showElectrolyte(ion) {
+        function showElectrolyte(ion, tabEl = null) {
             // Обновить табы
             document.querySelectorAll('.elyte-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            const activeTab = tabEl || document.querySelector(`.elyte-tab[data-ion="${ion}"]`);
+            if (activeTab) activeTab.classList.add('active');
             
             // Показать контент
             const data = electrolyteData[ion];
@@ -3290,10 +3291,6 @@
                 ${data.content}
             `;
         }
-
-        // Инициализация первого электролита
-        showElectrolyte('na');
-        document.querySelector('.elyte-tab').classList.add('active');
 
         // ==================== КЕЙСЫ ====================
         const caseAnswers = {

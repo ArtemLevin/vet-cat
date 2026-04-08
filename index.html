@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veterinary Fluid & Electrolyte Navigator</title>
+    <style>
+        /* ==================== БАЗОВЫЕ СТИЛИ ==================== */
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --bg-card: #1c2128;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            --accent-blue: #58a6ff;
+            --accent-blue-dark: #1f6feb;
+            --accent-amber: #d29922;
+            --accent-red: #f85149;
+            --accent-red-dark: #da3633;
+            --accent-green: #3fb950;
+            --border-color: #30363d;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --radius: 8px;
+            --radius-lg: 12px;
+            --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            --font-mono: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ==================== НАВИГАЦИЯ ==================== */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-right: 24px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--accent-blue-dark);
+            color: var(--text-primary);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 6px 12px 6px 32px;
+            color: var(--text-primary);
+            font-size: 13px;
+            width: 200px;
+            transition: width 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            width: 280px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            font-size: 12px;
+        }
+
+        .mode-switch {
+            position: relative;
+            width: 44px;
+            height: 22px;
+            background: var(--bg-primary);
+            border-radius: 11px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .mode-switch.active {
+            background: var(--accent-blue-dark);
+        }
+
+        .mode-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .mode-switch.active .mode-knob {
+            transform: translateX(22px);
+        }
+
+        .action-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .action-btn.danger {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        .action-btn.danger:hover {
+            background: var(--accent-red-dark);
+            color: white;
+        }
+
+        /* ==================== HERO SECTION ==================== */
+        .hero-section {
+            padding: 120px 24px 60px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--accent-blue);
+            margin-bottom: 16px;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn {
+            background: var(--accent-blue-dark);
+            border: none;
+            color: var(--text-primary);
+            padding: 14px 28px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hero-btn:hover {
+            background: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        .hero-btn.secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+        }
+
+        .hero-btn.secondary:hover {
+            border-color: var(--accent-blue);
+        }
+
+        /* ==================== QUICK START ==================== */
+        .quick-start {
+            max-width: 900px;
+            margin: 0 auto 40px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .quick-start h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .qs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .qs-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .qs-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .qs-select, .qs-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .qs-select:focus, .qs-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .qs-submit {
+            grid-column: 1 / -1;
+            background: var(--accent-green);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .qs-submit:hover {
+            background: #2ea043;
+        }
+
+        /* ==================== MAIN LAYOUT ==================== */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .content-area {
+            min-height: calc(100vh - 150px);
+        }
+
+        /* ==================== STICKY PATIENT PANEL ==================== */
+        .patient-panel {
+            position: sticky;
+            top: 80px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .patient-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            background: var(--bg-tertiary);
+            padding: 10px;
+            border-radius: var(--radius);
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .risk-section {
+            margin: 16px 0;
+        }
+
+        .risk-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .risk-bar {
+            height: 6px;
+            background: var(--bg-tertiary);
+            border-radius: 3px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .risk-low { background: var(--accent-green); }
+        .risk-medium { background: var(--accent-amber); }
+        .risk-high { background: var(--accent-red); }
+
+        .red-flags {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: var(--radius);
+            padding: 12px;
+            margin: 16px 0;
+        }
+
+        .red-flag-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--accent-red);
+            margin-bottom: 6px;
+        }
+
+        .red-flag-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .action-list {
+            list-style: none;
+            margin: 16px 0;
+        }
+
+        .action-item {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .action-item:last-child {
+            border-bottom: none;
+        }
+
+        .action-item strong {
+            color: var(--text-primary);
+        }
+
+        /* ==================== SECTIONS ==================== */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-content {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .key-thought {
+            background: rgba(88, 166, 255, 0.1);
+            border-left: 3px solid var(--accent-blue);
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+
+        .key-thought-title {
+            font-size: 12px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .key-thought-text {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .warning-box {
+            background: rgba(248, 81, 73, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin: 16px 0;
+        }
+
+        .warning-title {
+            font-size: 12px;
+            color: var(--accent-red);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .warning-text {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        /* ==================== TABLES ==================== */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin: 16px 0;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* ==================== ACCORDION ==================== */
+        .accordion {
+            margin: 16px 0;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            background: var(--bg-tertiary);
+            padding: 14px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: var(--bg-card);
+        }
+
+        .accordion-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .accordion-icon {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 16px;
+            background: var(--bg-card);
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .accordion-item.open .accordion-content {
+            display: block;
+        }
+
+        /* ==================== CALCULATORS ==================== */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .calc-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .calc-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .calc-input-group {
+            margin-bottom: 12px;
+        }
+
+        .calc-label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .calc-input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .calc-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .calc-btn {
+            width: 100%;
+            background: var(--accent-blue-dark);
+            border: none;
+            color: var(--text-primary);
+            padding: 10px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .calc-btn:hover {
+            background: var(--accent-blue);
+        }
+
+        .calc-result {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            display: none;
+        }
+
+        .calc-result.show {
+            display: block;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-blue);
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ==================== ELECTROLYTE VISUALIZATION ==================== */
+        .electrolyte-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .elyte-tab {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .elyte-tab:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .elyte-tab.active {
+            background: var(--accent-blue-dark);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .visualization {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .viz-svg {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* ==================== CASE STUDIES ==================== */
+        .case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .case-header {
+            background: var(--bg-tertiary);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .case-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .case-body {
+            padding: 20px;
+        }
+
+        .case-section {
+            margin-bottom: 16px;
+        }
+
+        .case-section-title {
+            font-size: 13px;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .case-options {
+            display: grid;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .case-option {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .case-option:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .case-option.selected {
+            border-color: var(--accent-blue);
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .case-option.correct {
+            border-color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.1);
+        }
+
+        .case-option.incorrect {
+            border-color: var(--accent-red);
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .case-feedback {
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            margin-top: 16px;
+            display: none;
+        }
+
+        .case-feedback.show {
+            display: block;
+        }
+
+        /* ==================== POCUS ==================== */
+        .pocus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .pocus-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .pocus-diagram {
+            width: 100%;
+            height: 200px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ==================== FLUID OVERLOAD ==================== */
+        .overload-checklist {
+            display: grid;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .checklist-item:hover {
+            background: var(--bg-card);
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-red);
+        }
+
+        .overload-assessment {
+            padding: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-top: 20px;
+        }
+
+        .risk-level {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .risk-level.low { color: var(--accent-green); }
+        .risk-level.medium { color: var(--accent-amber); }
+        .risk-level.high { color: var(--accent-red); }
+
+        /* ==================== CHEAT SHEET ==================== */
+        .cheat-sheet {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+        }
+
+        .cheat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .cheat-item {
+            background: var(--bg-tertiary);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .cheat-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+        }
+
+        .cheat-item-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ==================== SEARCH RESULTS ==================== */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1001;
+        }
+
+        .search-results.show {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .search-result-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .search-result-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ==================== PRINT MODE ==================== */
+        @media print {
+            .top-nav,
+            .hero-section,
+            .quick-start,
+            .patient-panel,
+            .nav-btn:not(.active),
+            .action-btn,
+            .search-box,
+            .mode-toggle {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .main-container {
+                display: block;
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .content-area {
+                min-height: auto;
+            }
+
+            .card,
+            .cheat-sheet {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+            }
+
+            .section {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-panel {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                max-height: 300px;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                z-index: 999;
+                transform: translateY(calc(100% - 60px));
+                transition: transform 0.3s;
+            }
+
+            .patient-panel.expanded {
+                transform: translateY(0);
+            }
+
+            .patient-toggle {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 60px;
+                background: var(--bg-card);
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 998;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0 12px;
+            }
+
+            .nav-logo {
+                font-size: 14px;
+                margin-right: 12px;
+            }
+
+            .nav-btn span {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-btn {
+                width: 100%;
+            }
+
+            .qs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .search-input:focus {
+                width: 180px;
+            }
+        }
+
+        /* ==================== UTILITY CLASSES ==================== */
+        .hidden { display: none !important; }
+        .text-accent { color: var(--accent-blue); }
+        .text-danger { color: var(--accent-red); }
+        .text-warning { color: var(--accent-amber); }
+        .text-success { color: var(--accent-green); }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="nav-logo">VetFluidNav</div>
+            <button class="nav-btn active" data-section="home"><span>Главная</span></button>
+            <button class="nav-btn" data-section="algorithm"><span>Алгоритм</span></button>
+            <button class="nav-btn" data-section="guide"><span>Руководство</span></button>
+            <button class="nav-btn" data-section="electrolytes"><span>Электролиты</span></button>
+            <button class="nav-btn" data-section="calculators"><span>Калькуляторы</span></button>
+            <button class="nav-btn" data-section="cases"><span>Кейсы</span></button>
+            <button class="nav-btn" data-section="pocus"><span>POCUS</span></button>
+            <button class="nav-btn" data-section="overload"><span>Перегрузка</span></button>
+            <button class="nav-btn" data-section="cheatsheet"><span>Шпаргалка</span></button>
+        </div>
+        <div class="nav-right">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Поиск..." id="searchInput">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            <div class="mode-toggle">
+                <span id="modeLabel">Обучение</span>
+                <div class="mode-switch" id="modeSwitch">
+                    <div class="mode-knob"></div>
+                </div>
+            </div>
+            <button class="action-btn" id="printBtn">🖨️ Печать</button>
+            <button class="action-btn danger" id="resetBtn">🔄 Сброс</button>
+        </div>
+    </nav>
+
+    <!-- Hero секция -->
+    <section class="hero-section" id="heroSection">
+        <h1 class="hero-title">Veterinary Fluid & Electrolyte Navigator</h1>
+        <h2 class="hero-subtitle">Интерактивное руководство по водному балансу, инфузионной терапии и электролитам у собак и кошек</h2>
+        <p class="hero-desc">Профессиональный клинический инструмент для ветеринарных врачей: decision-support navigator, калькулятор, учебный симулятор и printable cheat sheet в одном интерфейсе.</p>
+        <div class="hero-buttons">
+            <button class="hero-btn" onclick="navigateTo('algorithm')">Быстрый алгоритм</button>
+            <button class="hero-btn secondary" onclick="navigateTo('guide')">Полное руководство</button>
+            <button class="hero-btn secondary" onclick="navigateTo('calculators')">Калькуляторы</button>
+            <button class="hero-btn secondary" onclick="navigateTo('cases')">Клинические кейсы</button>
+            <button class="hero-btn secondary" onclick="navigateTo('cheatsheet')">Шпаргалка</button>
+        </div>
+    </section>
+
+    <!-- Быстрый старт -->
+    <div class="quick-start" id="quickStart">
+        <h3>🚀 Быстрый старт</h3>
+        <div class="qs-grid">
+            <div class="qs-field">
+                <label class="qs-label">Вид пациента</label>
+                <select class="qs-select" id="qsSpecies">
+                    <option value="dog">Собака</option>
+                    <option value="cat">Кошка</option>
+                </select>
+            </div>
+            <div class="qs-field">
+                <label class="qs-label">Масса тела (кг)</label>
+                <input type="number" class="qs-input" id="qsWeight" placeholder="Например: 5" step="0.1" min="0.1">
+            </div>
+            <div class="qs-field">
+                <label class="qs-label">Критическое состояние</label>
+                <select class="qs-select" id="qsCritical">
+                    <option value="no">Нет</option>
+                    <option value="yes">Да</option>
+                </select>
+            </div>
+            <div class="qs-field">
+                <label class="qs-label">Основная проблема</label>
+                <select class="qs-select" id="qsProblem">
+                    <option value="">Не выбрано</option>
+                    <option value="hypoperfusion">Гипоперфузия</option>
+                    <option value="dehydration">Дегидратация</option>
+                    <option value="disnatremia">Диснатриемия</option>
+                    <option value="hyperkalemia">Гиперкалиемия</option>
+                    <option value="hypokalemia">Гипокалиемия</option>
+                    <option value="hypocalcemia">Гипокальциемия</option>
+                    <option value="dka">ДКА</option>
+                    <option value="obstruction">Уретральная обструкция</option>
+                    <option value="aki_ckd">ОПП/ХБП</option>
+                    <option value="overload">Перегрузка жидкостью</option>
+                    <option value="unsure">Не уверен</option>
+                </select>
+            </div>
+            <button class="qs-submit" onclick="startClinicalPathway()">Открыть клинический маршрут →</button>
+        </div>
+    </div>
+
+    <!-- Основная рабочая область -->
+    <div class="main-container">
+        <!-- Левая колонка - контент -->
+        <div class="content-area">
+            
+            <!-- Секция: Главная -->
+            <section class="section active" id="home">
+                <div class="section-header">
+                    <h1 class="section-title">Добро пожаловать</h1>
+                    <p class="section-desc">Выберите раздел в навигации выше или используйте быстрый старт</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">📋 О руководстве</div>
+                    <div class="card-content">
+                        <p>Это интерактивное руководство создано для практикующих ветеринарных врачей, работающих с мелкими домашними животными. Материал охватывает все аспекты водно-электролитного баланса, от базовой патофизиологии до сложных клинических сценариев в условиях стационара и ОРИТ.</p>
+                        
+                        <div class="key-thought mt-3">
+                            <div class="key-thought-title">Ключевая мысль</div>
+                            <div class="key-thought-text">У пациента нужно разделять три разные задачи: восстановить перфузию, оценить общий водный баланс и отдельно скорректировать опасные электролитные нарушения.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">⚡ Режимы работы</div>
+                    <div class="card-content">
+                        <p><strong>Режим дежурства</strong> — показывает только экстренно важное: алгоритмы, предупреждения, красные флаги. Идеален для быстрых решений в ночную смену.</p>
+                        <p class="mt-2"><strong>Режим обучения</strong> — полная патофизиология, объяснения логики решений, развёрнутые тексты и схемы. Подходит для углублённого изучения.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Алгоритм -->
+            <section class="section" id="algorithm">
+                <div class="section-header">
+                    <h1 class="section-title">Быстрый алгоритм</h1>
+                    <p class="section-desc">Клинический навигатор для первичной оценки и приоритизации</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📝 Ввод данных пациента</div>
+                    <div class="card-content">
+                        <div class="qs-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                            <div class="qs-field">
+                                <label class="qs-label">Вид</label>
+                                <select class="qs-select alg-input" id="algSpecies">
+                                    <option value="dog">Собака</option>
+                                    <option value="cat">Кошка</option>
+                                </select>
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">Вес (кг)</label>
+                                <input type="number" class="qs-input alg-input" id="algWeight" step="0.1" min="0.1">
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-2" style="color: var(--text-secondary); font-size: 13px; text-transform: uppercase;">Клинические признаки</h4>
+                        <div class="qs-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algHypoperfusion">
+                                <span>Гипоперфузия</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algVomiting">
+                                <span>Рвота</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algDiarrhea">
+                                <span>Диарея</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algPolyuria">
+                                <span>Полиурия</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algOliguria">
+                                <span>Олигурия</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algAnuria">
+                                <span>Анурия</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algObstruction">
+                                <span>Обструкция</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algEffusion">
+                                <span>Выпоты</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algTachypnea">
+                                <span>Одышка</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox alg-input" id="algNeuro">
+                                <span>Неврологические признаки</span>
+                            </label>
+                        </div>
+
+                        <h4 class="mt-4 mb-2" style="color: var(--text-secondary); font-size: 13px; text-transform: uppercase;">Лабораторные данные</h4>
+                        <div class="qs-grid" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
+                            <div class="qs-field">
+                                <label class="qs-label">Na⁺ (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algNa" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">K⁺ (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algK" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">Cl⁻ (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algCl" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">iCa (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algCa" step="0.01">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">Mg (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algMg" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">P (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algP" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">Глюкоза (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algGlucose" step="0.1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">Креатинин (мкмоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algCreatinine" step="1">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">pH</label>
+                                <input type="number" class="qs-input alg-input" id="algPh" step="0.01" min="6.5" max="8">
+                            </div>
+                            <div class="qs-field">
+                                <label class="qs-label">HCO₃⁻ (ммоль/л)</label>
+                                <input type="number" class="qs-input alg-input" id="algHco3" step="0.1">
+                            </div>
+                        </div>
+
+                        <button class="qs-submit mt-4" onclick="runAlgorithm()">Анализировать и построить маршрут</button>
+                    </div>
+                </div>
+
+                <div class="card" id="algorithmResult" style="display: none;">
+                    <div class="card-title">🎯 Клиническая приоритизация</div>
+                    <div class="card-content" id="algorithmOutput"></div>
+                </div>
+            </section>
+
+            <!-- Секция: Руководство -->
+            <section class="section" id="guide">
+                <div class="section-header">
+                    <h1 class="section-title">Полное руководство</h1>
+                    <p class="section-desc">Цифровая версия пособия с интерактивными элементами</p>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">📖 Введение и базовая патофизиология</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Нарушения водного баланса и электролитов у собак и кошек редко существуют изолированно. На практике врач почти всегда имеет дело с комбинацией:</p>
+                            <ul class="mt-2" style="margin-left: 20px; color: var(--text-secondary);">
+                                <li>гипоперфузии или гиповолемии;</li>
+                                <li>общей дегидратации или перегрузки жидкостью;</li>
+                                <li>сдвигов натрия, калия, хлора, кальция, магния и фосфора;</li>
+                                <li>кислотно-основных нарушений;</li>
+                                <li>первичного заболевания.</li>
+                            </ul>
+                            
+                            <div class="key-thought mt-3">
+                                <div class="key-thought-title">Ключевая мысль</div>
+                                <div class="key-thought-text">У пациента нужно разделять три разные задачи: восстановить перфузию, оценить общий водный баланс и отдельно скорректировать опасные электролитные нарушения.</div>
+                            </div>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Распределение воды организма</h4>
+                            <p class="mt-2">Общая вода организма распределяется между внутриклеточным и внеклеточным секторами:</p>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li><strong>Внутрисосудистый объём</strong> — определяет перфузию и артериальное давление;</li>
+                                <li><strong>Интерстициальная жидкость</strong> — отражает общую гидратацию;</li>
+                                <li><strong>Внутриклеточная вода</strong> — чувствительна к изменениям осмоляльности, прежде всего к натрию.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">🔍 Первичная оценка и мониторинг</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <h4 style="color: var(--text-primary);">Первый вопрос: есть ли гипоперфузия?</h4>
+                            <p class="mt-2">При поступлении пациента сначала отвечают на вопрос, есть ли гемодинамически значимая гиповолемия или шок.</p>
+                            
+                            <h5 class="mt-3" style="color: var(--accent-blue);">Ранние признаки гипоперфузии:</h5>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>тахикардия;</li>
+                                <li>удлинение CRT;</li>
+                                <li>ухудшение качества пульса;</li>
+                                <li>жажда;</li>
+                                <li>снижение диуреза;</li>
+                                <li>холодные конечности.</li>
+                            </ul>
+
+                            <h5 class="mt-3" style="color: var(--accent-blue);">Что взять в первые 15–30 минут:</h5>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>PCV/TS или альбумин/общий белок;</li>
+                                <li>электролиты: Na⁺, K⁺, Cl⁻, по возможности iCa и iMg;</li>
+                                <li>глюкоза;</li>
+                                <li>креатинин, мочевина;</li>
+                                <li>газовый состав крови / КЩС;</li>
+                                <li>ЭКГ при подозрении на значимые сдвиги K⁺ или Ca²⁺.</li>
+                            </ul>
+
+                            <div class="warning-box mt-3">
+                                <div class="warning-title">Важно</div>
+                                <div class="warning-text">Если пациент гиповолемичен, сначала восстанавливают перфузию изотоническими кристаллоидами, а уже потом решают вопрос медленной коррекции натрия и свободной воды.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">💧 Типы дегидратации</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <h4 style="color: var(--text-primary);">Изотоническая дегидратация</h4>
+                            <p class="mt-2">Потери воды и натрия близки по составу к внеклеточной жидкости. Страдает прежде всего внеклеточный сектор и объём циркулирующей крови.</p>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Типичные причины:</strong> рвота, диарея, кровопотеря, секвестрация в ЖКТ, потери в третье пространство.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипертоническая дегидратация</h4>
+                            <p class="mt-2">Потеря свободной воды превышает потерю натрия. Внеклеточная жидкость становится гиперосмолярной, вода выходит из клеток.</p>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Типичные причины:</strong> ограничение доступа к воде, несахарный диабет, осмотический диурез, лихорадка, тахипноэ.</p>
+                            <p class="mt-2 text-danger"><strong>Клинический риск:</strong> неврологические нарушения из-за клеточной дегидратации мозга.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипотоническая дегидратация</h4>
+                            <p class="mt-2">Потеря натрия превышает потерю воды. Осмоляльность внеклеточной жидкости снижается, вода переходит в клетки.</p>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Типичные причины:</strong> гипоадренокортицизм, тяжёлые ЖКТ-потери, некоторые нефропатии.</p>
+                            <p class="mt-2 text-danger"><strong>Клинический риск:</strong> сочетание гиповолемии с риском клеточного отёка, включая отёк мозга.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">🧂 Натрий (Na⁺)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="key-thought">
+                                <div class="key-thought-title">Ключевая мысль</div>
+                                <div class="key-thought-text">Концентрация Na⁺ — это прежде всего показатель соотношения натрия к воде. Поэтому гипер- и гипонатриемия почти всегда отражают нарушение водного баланса, а не просто изменение общего количества натрия.</div>
+                            </div>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Гипернатриемия</h4>
+                            <table class="data-table mt-2">
+                                <tr><th>Объёмный статус</th><th>Причины</th></tr>
+                                <tr><td>Гиповолемическая</td><td>Потери воды при ЖКТ-потерях, почечных потерях, лихорадке, тахипноэ</td></tr>
+                                <tr><td>Эуволемическая</td><td>Потеря свободной воды, несахарный диабет</td></tr>
+                                <tr><td>Гиперволемическая</td><td>Гипертонические растворы, солевые интоксикации</td></tr>
+                            </table>
+                            <p class="mt-2 text-danger"><strong>Клиника:</strong> вялость, слабость, атаксия, тремор, судороги, кома.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипонатриемия</h4>
+                            <table class="data-table mt-2">
+                                <tr><th>Объёмный статус</th><th>Причины</th></tr>
+                                <tr><td>Гиповолемическая</td><td>Потеря Na⁺ при рвоте, диарее, диуретиках, гипоадренокортицизме</td></tr>
+                                <tr><td>Эуволемическая</td><td>SIADH-подобные состояния, гипотонические инфузии</td></tr>
+                                <tr><td>Гиперволемическая</td><td>Водная задержка при сердечной и почечной недостаточности</td></tr>
+                            </table>
+
+                            <div class="warning-box mt-3">
+                                <div class="warning-title">Главный принцип коррекции</div>
+                                <div class="warning-text">Быстрая коррекция диснатриемии может быть опаснее самого нарушения. Обычно стараются не изменять Na⁺ быстрее, чем на 0,5 ммоль/л/ч.</div>
+                            </div>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Дефицит свободной воды</h4>
+                            <p class="mt-2" style="font-family: var(--font-mono); background: var(--bg-tertiary); padding: 12px; border-radius: var(--radius);">ДСВ = 0,6 × масса(кг) × (Na<sub>изм</sub>/Na<sub>норма</sub> − 1)</p>
+                            <p class="mt-2" style="color: var(--text-secondary);">Это расчётная отправная точка, а не абсолютная истина.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">⚡ Калий (K⁺)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="key-thought">
+                                <div class="key-thought-title">Ключевая мысль</div>
+                                <div class="key-thought-text">Калий — электролит немедленной опасности, потому что быстро меняет мембранный потенциал и проводимость миокарда.</div>
+                            </div>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Гиперкалиемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Основные причины:</strong> снижение почечного выведения, ОПП/ХБП, уретральная обструкция, разрыв мочевого пузыря, гипоадренокортицизм, ацидоз, инсулиновая недостаточность.</p>
+                            
+                            <h5 class="mt-3" style="color: var(--accent-blue);">Типичные ЭКГ-изменения:</h5>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>высокий пикообразный зубец T;</li>
+                                <li>уплощение или исчезновение зубца P;</li>
+                                <li>удлинение PR;</li>
+                                <li>расширение QRS;</li>
+                                <li>AV-блокада;</li>
+                                <li>синусоидальная форма при тяжёлых случаях.</li>
+                            </ul>
+
+                            <h5 class="mt-3" style="color: var(--accent-blue);">Экстренное лечение:</h5>
+                            <ol style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li><strong>Стабилизировать миокард:</strong> кальция глюконат в/в медленно под ЭКГ-контролем.</li>
+                                <li><strong>Сместить K⁺ в клетку:</strong> инсулин короткого действия с декстрозой.</li>
+                                <li><strong>Удалить K⁺ из организма:</strong> инфузия, восстановление диуреза, устранение обструкции.</li>
+                            </ol>
+
+                            <div class="key-thought mt-3">
+                                <div class="key-thought-title">Важно</div>
+                                <div class="key-thought-text">Кальций улучшает электрическую стабильность миокарда, но не снижает общий калий в организме.</div>
+                            </div>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипокалиемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Причины:</strong> недостаточное поступление, рвота, диарея, почечные потери, диуретики, алкалоз.</p>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Клиника:</strong> слабость, анорексия, парез, у кошек — вентрофлексия шеи.</p>
+                            
+                            <div class="key-thought mt-3">
+                                <div class="key-thought-title">Важно</div>
+                                <div class="key-thought-text">Если гипокалиемия корректируется плохо, нужно проверить магний: дефицит Mg²⁺ часто делает гипокалиемию рефрактерной.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">🔄 Хлор (Cl⁻)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Хлор тесно связан с кислотно-основным состоянием и не должен рассматриваться как второстепенный электролит.</p>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Гиперхлоремия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Частые ситуации:</strong> гипернатриемия, большие объёмы 0,9% NaCl, гиперхлоремический метаболический ацидоз.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипохлоремия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Частые ситуации:</strong> рвота и потери HCl, обструкция верхних отделов ЖКТ, гипохлоремический метаболический алкалоз.</p>
+
+                            <div class="key-thought mt-3">
+                                <div class="key-thought-title">Ключевая мысль</div>
+                                <div class="key-thought-text">У пациента с рвотой, высоким HCO₃⁻ и низким Cl⁻ надо думать не просто о дегидратации, а о chloride-responsive alkalosis.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">🦴 Кальций (Ca²⁺)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Биологически активен именно ионизированный кальций. У критических пациентов ориентироваться лучше на iCa, а не только на общий кальций.</p>
+                            
+                            <table class="data-table mt-2">
+                                <tr><th>Фракция</th><th>Доля</th></tr>
+                                <tr><td>Ионизированный</td><td>~55%</td></tr>
+                                <tr><td>Связанный с анионами</td><td>~10%</td></tr>
+                                <tr><td>Связанный с белками</td><td>~35%</td></tr>
+                            </table>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гиперкальциемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Важные причины:</strong> гиперкальциемия злокачественных новообразований, первичный гиперпаратиреоз, аденокарцинома апокриновых желёз анальных мешков, ХБП, гипоадренокортицизм.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гипокальциемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Причины:</strong> гипопаратиреоз, эклампсия, панкреатит, сепсис, этиленгликоль, цитратная нагрузка при трансфузиях.</p>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Клиника:</strong> нервно-мышечная возбудимость, тремор, фасцикуляции, тетания, судороги.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">🔬 Магний (Mg²⁺)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Магний влияет на нервно-мышечную передачу, возбудимость миокарда, внутриклеточный транспорт калия.</p>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Когда подозревать гипомагниемию</h4>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>рефрактерная гипокалиемия;</li>
+                                <li>аритмии;</li>
+                                <li>тремор;</li>
+                                <li>ДКА, сепсис;</li>
+                                <li>длительные ЖКТ-потери.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">⚗️ Фосфор (P)</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Фосфор критичен для синтеза АТФ, работы мембран, эритроцитов, мышц и нервной системы.</p>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Гипофосфатемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Типичные причины:</strong> ДКА после начала инсулина, рефидинг, сепсис, тяжёлая анорексия, алкалоз.</p>
+                            <p class="mt-2 text-danger"><strong>Клиника:</strong> слабость, гемолиз, снижение сократимости дыхательной мускулатуры.</p>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Гиперфосфатемия</h4>
+                            <p class="mt-2" style="color: var(--text-secondary);"><strong>Типичные причины:</strong> ОПП/ХБП, массивное клеточное повреждение.</p>
+                            <p class="mt-2 text-danger"><strong>Важно:</strong> при высоком произведении Ca × P растёт риск минерализации тканей.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">💉 Выбор инфузионного раствора</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <table class="data-table">
+                                <tr>
+                                    <th>Раствор</th>
+                                    <th>Когда уместен</th>
+                                    <th>Когда нежелателен</th>
+                                </tr>
+                                <tr>
+                                    <td>Сбалансированный изотонический кристаллоид</td>
+                                    <td>Гиповолемия, регидратация, большинство стационарных пациентов</td>
+                                    <td>Тяжёлые специфические ситуации</td>
+                                </tr>
+                                <tr>
+                                    <td>0,9% NaCl</td>
+                                    <td>Гипохлоремический алкалоз, потери HCl</td>
+                                    <td>Риск гиперхлоремического ацидоза</td>
+                                </tr>
+                                <tr>
+                                    <td>Растворы с декстрозой</td>
+                                    <td>Свободная вода после стабилизации, гипогликемия</td>
+                                    <td>Первичная коррекция гиповолемии</td>
+                                </tr>
+                                <tr>
+                                    <td>Гипотонические растворы</td>
+                                    <td>После стабилизации под строгим контролем Na</td>
+                                    <td>Шок, гиповолемия</td>
+                                </tr>
+                            </table>
+
+                            <div class="key-thought mt-3">
+                                <div class="key-thought-title">Важно</div>
+                                <div class="key-thought-text">Для первичной коррекции гиповолемии растворы свободной воды и гипотонические растворы не подходят.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <span class="accordion-title">⚠️ Перегрузка жидкостью</span>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p>Неответ на инфузию не всегда означает «нужно ещё жидкости». Иногда это уже перегрузка жидкостью, третье пространство или кардиоренальная проблема.</p>
+
+                            <h4 class="mt-3" style="color: var(--text-primary);">Признаки перегрузки</h4>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>быстрый прирост массы тела;</li>
+                                <li>тахипноэ, усиление дыхательных усилий;</li>
+                                <li>серозные выделения из носа;</li>
+                                <li>хрипы, хемоз;</li>
+                                <li>появление или усиление выпотов/асцита;</li>
+                                <li>положительный баланс без улучшения перфузии.</li>
+                            </ul>
+
+                            <h4 class="mt-4" style="color: var(--text-primary);">Группы риска</h4>
+                            <ul style="margin-left: 20px; color: var(--text-secondary); margin-top: 8px;">
+                                <li>кошки;</li>
+                                <li>пациенты с ХБП/ОПП;</li>
+                                <li>сердечные пациенты;</li>
+                                <li>гипоальбуминемия;</li>
+                                <li>сепсис и выраженное третье пространство.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Электролиты -->
+            <section class="section" id="electrolytes">
+                <div class="section-header">
+                    <h1 class="section-title">Электролиты</h1>
+                    <p class="section-desc">Интерактивная визуализация и подробная информация по каждому иону</p>
+                </div>
+
+                <div class="electrolyte-tabs">
+                    <button class="elyte-tab active" onclick="showElectrolyte('na')">Na⁺</button>
+                    <button class="elyte-tab" onclick="showElectrolyte('k')">K⁺</button>
+                    <button class="elyte-tab" onclick="showElectrolyte('cl')">Cl⁻</button>
+                    <button class="elyte-tab" onclick="showElectrolyte('ca')">Ca²⁺</button>
+                    <button class="elyte-tab" onclick="showElectrolyte('mg')">Mg²⁺</button>
+                    <button class="elyte-tab" onclick="showElectrolyte('p')">P</button>
+                </div>
+
+                <div id="electrolyteContent">
+                    <!-- Контент загружается динамически -->
+                </div>
+            </section>
+
+            <!-- Секция: Калькуляторы -->
+            <section class="section" id="calculators">
+                <div class="section-header">
+                    <h1 class="section-title">Калькуляторы</h1>
+                    <p class="section-desc">Быстрые расчёты для клинической практики</p>
+                </div>
+
+                <div class="calc-grid">
+                    <!-- Водный баланс -->
+                    <div class="calc-card">
+                        <div class="calc-title">💧 Водный баланс</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Входы (мл)</label>
+                            <input type="number" class="calc-input" id="wbInputs" placeholder="Инфузия + перорально">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Выходы (мл)</label>
+                            <input type="number" class="calc-input" id="wbOutputs" placeholder="Моча + прочие потери">
+                        </div>
+                        <button class="calc-btn" onclick="calcWaterBalance()">Рассчитать</button>
+                        <div class="calc-result" id="wbResult">
+                            <div class="result-value" id="wbValue"></div>
+                            <div class="result-label" id="wbInterpretation"></div>
+                        </div>
+                    </div>
+
+                    <!-- Дефицит свободной воды -->
+                    <div class="calc-card">
+                        <div class="calc-title">📏 Дефицит свободной воды</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Масса (кг)</label>
+                            <input type="number" class="calc-input" id="fwdWeight" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ текущий (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="fwdNa" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ норма (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="fwdNaNorm" value="145" step="0.1">
+                        </div>
+                        <button class="calc-btn" onclick="calcFreeWaterDeficit()">Рассчитать</button>
+                        <div class="calc-result" id="fwdResult">
+                            <div class="result-value" id="fwdValue"></div>
+                            <div class="result-label" id="fwdInterpretation"></div>
+                        </div>
+                    </div>
+
+                    <!-- Скорректированный натрий -->
+                    <div class="calc-card">
+                        <div class="calc-title">🔧 Скорректированный Na⁺ при гипергликемии</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ измеренный (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="cnaNa" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Глюкоза (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="cnaGlucose" step="0.1">
+                        </div>
+                        <button class="calc-btn" onclick="calcCorrectedNa()">Рассчитать</button>
+                        <div class="calc-result" id="cnaResult">
+                            <div class="result-value" id="cnaValue"></div>
+                            <div class="result-label" id="cnaInterpretation"></div>
+                        </div>
+                    </div>
+
+                    <!-- Anion Gap -->
+                    <div class="calc-card">
+                        <div class="calc-title">📊 Anion Gap (AG)</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="agNa" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">K⁺ (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="agK" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Cl⁻ (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="agCl" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">HCO₃⁻ (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="agHco3" step="0.1">
+                        </div>
+                        <button class="calc-btn" onclick="calcAnionGap()">Рассчитать</button>
+                        <div class="calc-result" id="agResult">
+                            <div class="result-value" id="agValue"></div>
+                            <div class="result-label" id="agInterpretation"></div>
+                        </div>
+                    </div>
+
+                    <!-- Corrected Chloride -->
+                    <div class="calc-card">
+                        <div class="calc-title">🔄 Corrected Chloride</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Cl⁻ измеренный (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="ccCl" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ измеренный (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="ccNa" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ норма (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="ccNaNorm" value="145" step="0.1">
+                        </div>
+                        <button class="calc-btn" onclick="calcCorrectedCl()">Рассчитать</button>
+                        <div class="calc-result" id="ccResult">
+                            <div class="result-value" id="ccValue"></div>
+                            <div class="result-label" id="ccInterpretation"></div>
+                        </div>
+                    </div>
+
+                    <!-- Безопасная скорость коррекции Na -->
+                    <div class="calc-card">
+                        <div class="calc-title">⏱️ Безопасная скорость коррекции Na⁺</div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ текущий (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="safeNaRate" step="0.1">
+                        </div>
+                        <div class="calc-input-group">
+                            <label class="calc-label">Na⁺ целевой (ммоль/л)</label>
+                            <input type="number" class="calc-input" id="safeNaTarget" step="0.1">
+                        </div>
+                        <button class="calc-btn" onclick="calcSafeNaRate()">Рассчитать</button>
+                        <div class="calc-result" id="safeNaResult">
+                            <div class="result-value" id="safeNaValue"></div>
+                            <div class="result-label" id="safeNaInterpretation"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Кейсы -->
+            <section class="section" id="cases">
+                <div class="section-header">
+                    <h1 class="section-title">Клинические сценарии</h1>
+                    <p class="section-desc">Интерактивные кейсы для отработки клинического мышления</p>
+                </div>
+
+                <!-- Кейс 1 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐱 Кот с уретральной обструкцией и гиперкалиемией</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Жалобы / история</div>
+                            <p>Кот, 5 лет, 6 кг. Не мочится 2 дня, вялость, рвота. Владелец заметил частые безрезультатные попытки мочеиспускания.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Осмотр</div>
+                            <p>CRT 2.5 сек, пульс слабый 140 уд/мин, температура 36.8°C. Мочевой пузырь напряжённый, большой. Депрессия.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Лаборатория (экспресс)</div>
+                            <p>K⁺ 8.2 ммоль/л, Na⁺ 138 ммоль/л, Cl⁻ 105 ммоль/л, креатинин 450 мкмоль/л, pH 7.15, HCO₃⁻ 14 ммоль/л. ЭКГ: высокие пики T, уплощение P.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Какой следующий шаг?</div>
+                            <div class="case-options" id="case1Options">
+                                <div class="case-option" onclick="selectCaseOption(1, 0)">A) Немедленная катетеризация под седацией</div>
+                                <div class="case-option" onclick="selectCaseOption(1, 1)">B) Кальция глюконат в/в медленно + инсулин с декстрозой, затем декомпрессия</div>
+                                <div class="case-option" onclick="selectCaseOption(1, 2)">C) Фуросемид в/в для ускорения выведения калия</div>
+                                <div class="case-option" onclick="selectCaseOption(1, 3)">D) 0.9% NaCl болюс 60 мл/кг</div>
+                            </div>
+                            <div class="case-feedback" id="case1Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 2 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐕 Собака с гипоадренокортицизмом</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Жалобы / история</div>
+                            <p>Собака, 4 года, 25 кг. Периодическая рвота и диарея в течение недели, прогрессирующая слабость. Сегодня коллапс.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Осмотр</div>
+                            <p>CRT 3 сек, пульс слабый 180 уд/мин, температура 37.2°C. Слизистые бледные, глаза запавшие. Выраженная дегидратация ~8%.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Лаборатория</div>
+                            <p>K⁺ 7.5 ммоль/л, Na⁺ 128 ммоль/л, Cl⁻ 98 ммоль/л, Na:K соотношение 17:1, глюкоза 3.2 ммоль/л, креатинин 280 мкмоль/л.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Какой следующий шаг?</div>
+                            <div class="case-options" id="case2Options">
+                                <div class="case-option" onclick="selectCaseOption(2, 0)">A) Дексаметазон, затем изотонический кристаллоид болюс</div>
+                                <div class="case-option" onclick="selectCaseOption(2, 1)">B) Сначала инсулин с декстрозой для снижения K⁺</div>
+                                <div class="case-option" onclick="selectCaseOption(2, 2)">C) Только 0.9% NaCl без гормонов до подтверждения диагноза</div>
+                                <div class="case-option" onclick="selectCaseOption(2, 3)">D) Кальция глюконат немедленно</div>
+                            </div>
+                            <div class="case-feedback" id="case2Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кейс 3 -->
+                <div class="case-card">
+                    <div class="case-header">
+                        <div class="case-title">🐕 Пациент с рвотой и гипохлоремией</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-section">
+                            <div class="case-section-title">Жалобы / история</div>
+                            <p>Собака, 6 лет. Многократная рвота непереваренной пищей в течение 5 дней. Прогрессирующая слабость.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Лаборатория</div>
+                            <p>Na⁺ 142 ммоль/л, K⁺ 3.1 ммоль/л, Cl⁻ 88 ммоль/л, HCO₃⁻ 38 ммоль/л, pH 7.52. Дегидратация ~6%.</p>
+                        </div>
+                        <div class="case-section">
+                            <div class="case-section-title">Какой следующий шаг?</div>
+                            <div class="case-options" id="case3Options">
+                                <div class="case-option" onclick="selectCaseOption(3, 0)">A) 0.9% NaCl + KCl коррекция</div>
+                                <div class="case-option" onclick="selectCaseOption(3, 1)">B) Сбалансированный кристаллоид (Lactated Ringer's)</div>
+                                <div class="case-option" onclick="selectCaseOption(3, 2)">C) Бикарбонат натрия для коррекции алкалоза</div>
+                                <div class="case-option" onclick="selectCaseOption(3, 3)">D) Гипотонический раствор для восполнения воды</div>
+                            </div>
+                            <div class="case-feedback" id="case3Feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: POCUS -->
+            <section class="section" id="pocus">
+                <div class="section-header">
+                    <h1 class="section-title">POCUS</h1>
+                    <p class="section-desc">Bedside ultrasound для оценки объёмного статуса и выпотов</p>
+                </div>
+
+                <div class="pocus-grid">
+                    <div class="pocus-card">
+                        <div class="card-title">AFAST (Abdominal)</div>
+                        <div class="pocus-diagram">
+                            <svg width="200" height="150" viewBox="0 0 200 150">
+                                <ellipse cx="100" cy="75" rx="80" ry="60" fill="none" stroke="#58a6ff" stroke-width="2"/>
+                                <circle cx="100" cy="60" r="20" fill="none" stroke="#3fb950" stroke-width="2"/>
+                                <line x1="50" y1="75" x2="150" y2="75" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4"/>
+                                <line x1="100" y1="40" x2="100" y2="110" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4"/>
+                                <text x="100" y="140" text-anchor="middle" fill="#8b949e" font-size="12">Зоны сканирования</text>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Когда использовать:</strong> шок неясной этиологии, травма, оценка асцита, мониторинг третьего пространства.</p>
+                            <p class="mt-2"><strong>Что искать:</strong> свободная жидкость в брюшной полости, наполнение мочевого пузыря, крупные изменения органов.</p>
+                            <p class="mt-2"><strong>Влияние на тактику:</strong> наличие выпота может изменить решение о дополнительной инфузии.</p>
+                        </div>
+                    </div>
+
+                    <div class="pocus-card">
+                        <div class="card-title">TFAST (Thoracic)</div>
+                        <div class="pocus-diagram">
+                            <svg width="200" height="150" viewBox="0 0 200 150">
+                                <rect x="40" y="30" width="120" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/>
+                                <line x1="100" y1="30" x2="100" y2="120" stroke="#58a6ff" stroke-width="1"/>
+                                <path d="M 60 50 Q 100 40 140 50" fill="none" stroke="#f85149" stroke-width="2"/>
+                                <path d="M 60 70 Q 100 60 140 70" fill="none" stroke="#f85149" stroke-width="2"/>
+                                <text x="100" y="140" text-anchor="middle" fill="#8b949e" font-size="12">Грудная клетка</text>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Когда использовать:</strong> одышка, подозрение на плевральный выпот, отёк лёгких, пневмоторакс.</p>
+                            <p class="mt-2"><strong>Что искать:</strong> плевральный выпот, B-lines (интерстициальный синдром), скольжение плевры.</p>
+                            <p class="mt-2"><strong>Влияние на тактику:</strong> выявление перегрузки жидкостью, необходимость диуретиков или торакоцентеза.</p>
+                        </div>
+                    </div>
+
+                    <div class="pocus-card">
+                        <div class="card-title">CPOCUS (Cardiac)</div>
+                        <div class="pocus-diagram">
+                            <svg width="200" height="150" viewBox="0 0 200 150">
+                                <path d="M 100 40 C 120 40 140 60 140 80 C 140 100 120 120 100 120 C 80 120 60 100 60 80 C 60 60 80 40 100 40" fill="none" stroke="#58a6ff" stroke-width="2"/>
+                                <ellipse cx="100" cy="80" rx="25" ry="30" fill="none" stroke="#3fb950" stroke-width="2"/>
+                                <text x="100" y="140" text-anchor="middle" fill="#8b949e" font-size="12">Сердце (схема)</text>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <p><strong>Когда использовать:</strong> шок, нестабильность, подозрение на тампонаду, оценка переносимости жидкости.</p>
+                            <p class="mt-2"><strong>Что искать:</strong> перикардиальный выпот, грубая сократимость, дилатация камер, IVC collapsibility.</p>
+                            <p class="mt-2"><strong>Влияние на тактику:</strong> решение о продолжении или остановке инфузии, необходимость перикардиоцентеза.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-title">⚠️ Чего POCUS не решает</div>
+                    <div class="card-content">
+                        <ul style="margin-left: 20px; color: var(--text-secondary);">
+                            <li>не заменяет полный УЗИ-протокол;</li>
+                            <li>не отменяет лабораторную оценку электролитов и КЩС;</li>
+                            <li>не заменяет полноценное ЭХО;</li>
+                            <li>не должен использоваться в отрыве от клинической картины.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Перегрузка -->
+            <section class="section" id="overload">
+                <div class="section-header">
+                    <h1 class="section-title">Перегрузка жидкостью</h1>
+                    <p class="section-desc">Оценка риска и принятие решений</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📋 Оценка признаков перегрузки</div>
+                    <div class="card-content">
+                        <div class="overload-checklist">
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olTachypnea" onchange="assessOverload()">
+                                <span>Тахипноэ / усиление дыхательных усилий</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olWeightGain" onchange="assessOverload()">
+                                <span>Быстрый прирост массы тела (&gt;5% за 24ч)</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olChemosis" onchange="assessOverload()">
+                                <span>Хемоз / серозные выделения из носа</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olEffusions" onchange="assessOverload()">
+                                <span>Новые или усиливающиеся выпоты / асцит</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olLowUrine" onchange="assessOverload()">
+                                <span>Снижение диуреза на фоне инфузии</span>
+                            </label>
+                            <label class="checklist-item">
+                                <input type="checkbox" class="checklist-checkbox" id="olPositiveBalance" onchange="assessOverload()">
+                                <span>Положительный баланс без улучшения перфузии</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overload-assessment" id="overloadAssessment">
+                    <div class="risk-level low" id="overloadRiskLevel">Риск перегрузки: НИЗКИЙ</div>
+                    <div class="card-content" id="overloadComment">
+                        <p>На данный момент признаки перегрузки отсутствуют. Продолжайте стандартный мониторинг.</p>
+                    </div>
+                    <div class="card-content mt-3" id="overloadActions">
+                        <strong>Рекомендации:</strong>
+                        <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                            <li>Продолжить плановую инфузионную терапию</li>
+                            <li>Мониторировать массу тела и диурез каждые 6-12 часов</li>
+                            <li>Оценивать CRT, пульс, дыхание при каждом осмотре</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-title">🎯 Группы особого риска</div>
+                    <div class="card-content">
+                        <ul style="margin-left: 20px; color: var(--text-secondary);">
+                            <li><strong>Кошки</strong> — особенно чувствительны к объёмной нагрузке;</li>
+                            <li><strong>Пациенты с ХБП/ОПП</strong> — олигурия повышает риск;</li>
+                            <li><strong>Сердечные пациенты</strong> — сниженный резерв;</li>
+                            <li><strong>Гипоальбуминемия</strong> — онкотическое давление снижено;</li>
+                            <li><strong>Сепсис</strong> — повышенная проницаемость капилляров;</li>
+                            <li><strong>Очень мелкие животные</strong> — малый объём распределения.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция: Шпаргалка -->
+            <section class="section" id="cheatsheet">
+                <div class="section-header">
+                    <h1 class="section-title">Шпаргалка</h1>
+                    <p class="section-desc">Краткая памятка для быстрой печати и использования в клинике</p>
+                </div>
+
+                <div class="cheat-sheet">
+                    <div class="cheat-grid">
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">🚨 Гиповолемия</div>
+                            <div class="cheat-item-content">Сначала перфузия, потом тонкая коррекция электролитов. Изотонические кристаллоиды болюсами по 10-20 мл/кг с переоценкой.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">📈 Гипернатриемия</div>
+                            <div class="cheat-item-content">Медленная коррекция! Риск отёка мозга при слишком быстром снижении Na⁺. Максимум 0.5 ммоль/л/ч.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">📉 Гипонатриемия</div>
+                            <div class="cheat-item-content">Медленная коррекция хронических случаев. Риск осмотического повреждения при слишком быстром повышении.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">⚡ Гиперкалиемия</div>
+                            <div class="cheat-item-content">ЭКГ → Кальций (стабилизация) → Инсулин+декстроза (сдвиг) → Устранение причины. Не ждать все анализы при ЭКГ-угрозе!</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">📉 Гипокалиемия</div>
+                            <div class="cheat-item-content">Проверить магний! Не превышать 0.5 ммоль/кг/ч при в/в введении. Раннее подключение пероральных препаратов.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">🔄 Гипохлоремия</div>
+                            <div class="cheat-item-content">Часто связана с рвотой и метаболическим алкалозом. 0.9% NaCl может быть логичным выбором.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">🦴 Гипокальциемия</div>
+                            <div class="cheat-item-content">Ориентируйся на ионизированный кальций (iCa). При тетании — кальция глюконат медленно под ЭКГ.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">⚗️ Гипофосфатемия</div>
+                            <div class="cheat-item-content">Помнить про ДКА, рефидинг, гемолиз. Контроль фосфора должен быть рутинным у тяжёлых пациентов.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">💧 Перегрузка</div>
+                            <div class="cheat-item-content">Положительный баланс без пользы — не повод увеличивать капельницу! Пересмотреть инфузию немедленно.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">🔬 Рефрактерная гипокалиемия</div>
+                            <div class="cheat-item-content">Проверь магний! Дефицит Mg²⁺ делает гипокалиемию устойчивой к коррекции.</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">⏱️ Таймлайн пересмотра</div>
+                            <div class="cheat-item-content">1 час: ответ на болюс? 4 часа: пересмотр раствора? 12 часов: куда движется пациент?</div>
+                        </div>
+
+                        <div class="cheat-item">
+                            <div class="cheat-item-title">🎯 Конечные точки</div>
+                            <div class="cheat-item-content">CRT, пульс, ЧСС, ментальный статус, АД, диурез, лактат. Цель — не «дать объём», а восстановить перфузию.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-title">📊 Численные ориентиры</div>
+                    <div class="card-content">
+                        <table class="data-table">
+                            <tr><th>Параметр</th><th>Значение</th></tr>
+                            <tr><td>Диурез (ориентир)</td><td>~1 мл/кг/ч и выше</td></tr>
+                            <tr><td>Макс. скорость изменения Na⁺</td><td>0.5 ммоль/л/ч</td></tr>
+                            <tr><td>Суточный предел Na⁺ (хронически)</td><td>8-12 ммоль/л/сут</td></tr>
+                            <tr><td>Верхний предел скорости K⁺ в/в</td><td>0.5 ммоль/кг/ч</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Правая колонка - Patient Panel -->
+        <aside class="patient-panel" id="patientPanel">
+            <div class="patient-header">
+                <div class="patient-title">📋 Карточка пациента</div>
+                <button class="action-btn" onclick="togglePatientPanel()" style="padding: 4px 8px; font-size: 12px;">↕️</button>
+            </div>
+
+            <div class="patient-info">
+                <div class="info-item">
+                    <div class="info-label">Вид</div>
+                    <div class="info-value" id="pSpecies">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Масса</div>
+                    <div class="info-value" id="pWeight">—</div>
+                </div>
+            </div>
+
+            <div class="red-flags" id="redFlags" style="display: none;">
+                <div class="red-flag-item">⚠️ <span id="redFlagText"></span></div>
+            </div>
+
+            <div class="risk-section">
+                <div class="risk-title">Риск гипоперфузии</div>
+                <div class="risk-bar"><div class="risk-fill risk-low" id="riskPerfusion" style="width: 10%;"></div></div>
+            </div>
+
+            <div class="risk-section">
+                <div class="risk-title">Риск неврологических осложнений</div>
+                <div class="risk-bar"><div class="risk-fill risk-low" id="riskNeuro" style="width: 10%;"></div></div>
+            </div>
+
+            <div class="risk-section">
+                <div class="risk-title">Риск аритмии</div>
+                <div class="risk-bar"><div class="risk-fill risk-low" id="riskArrhythmia" style="width: 10%;"></div></div>
+            </div>
+
+            <div class="risk-section">
+                <div class="risk-title">Риск перегрузки жидкостью</div>
+                <div class="risk-bar"><div class="risk-fill risk-low" id="riskOverload" style="width: 10%;"></div></div>
+            </div>
+
+            <div class="mt-4">
+                <div class="info-label mb-2">Главные проблемы сейчас</div>
+                <ul class="action-list" id="mainProblems">
+                    <li class="action-item">Нет активных данных</li>
+                </ul>
+            </div>
+
+            <div class="mt-4">
+                <div class="info-label mb-2">Что важно сделать</div>
+                <ul class="action-list" id="actionItems">
+                    <li class="action-item">Введите данные пациента</li>
+                </ul>
+            </div>
+
+            <button class="action-btn" style="width: 100%; margin-top: 16px;" onclick="window.print()">🖨️ Распечатать карточку</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== СОСТОЯНИЕ ПРИЛОЖЕНИЯ ====================
+        const state = {
+            mode: 'learning', // 'duty' или 'learning'
+            patient: {
+                species: null,
+                weight: null,
+                critical: false,
+                problem: null,
+                labs: {},
+                signs: {}
+            },
+            currentSection: 'home'
+        };
+
+        // ==================== НАВИГАЦИЯ ====================
+        function navigateTo(sectionId) {
+            // Скрыть все секции
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            // Показать нужную
+            const target = document.getElementById(sectionId);
+            if (target) {
+                target.classList.add('active');
+                state.currentSection = sectionId;
+            }
+            
+            // Обновить кнопку навигации
+            const navBtn = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+            if (navBtn) navBtn.classList.add('active');
+            
+            // Скрыть hero если не главная
+            const hero = document.getElementById('heroSection');
+            const quickStart = document.getElementById('quickStart');
+            if (sectionId === 'home') {
+                hero.style.display = 'block';
+                quickStart.style.display = 'block';
+            } else {
+                hero.style.display = 'none';
+                quickStart.style.display = 'none';
+            }
+            
+            // Прокрутка вверх
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Обработчики навигации
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.dataset.section;
+                navigateTo(section);
+            });
+        });
+
+        // ==================== РЕЖИМЫ ====================
+        const modeSwitch = document.getElementById('modeSwitch');
+        const modeLabel = document.getElementById('modeLabel');
+        
+        modeSwitch.addEventListener('click', () => {
+            state.mode = state.mode === 'learning' ? 'duty' : 'learning';
+            modeSwitch.classList.toggle('active');
+            modeLabel.textContent = state.mode === 'learning' ? 'Обучение' : 'Дежурство';
+            
+            // Применить режим
+            if (state.mode === 'duty') {
+                document.body.classList.add('duty-mode');
+                // Скрыть теорию, оставить только важное
+                document.querySelectorAll('.accordion-content').forEach(c => {
+                    c.style.display = 'none';
+                });
+                document.querySelectorAll('.accordion-item').forEach(i => {
+                    i.classList.remove('open');
+                });
+            } else {
+                document.body.classList.remove('duty-mode');
+            }
+        });
+
+        // ==================== ПЕЧАТЬ ====================
+        document.getElementById('printBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // ==================== СБРОС ====================
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Сбросить все данные пациента?')) {
+                state.patient = {
+                    species: null,
+                    weight: null,
+                    critical: false,
+                    problem: null,
+                    labs: {},
+                    signs: {}
+                };
+                updatePatientPanel();
+                document.getElementById('redFlags').style.display = 'none';
+                document.getElementById('algorithmResult').style.display = 'none';
+                
+                // Очистить поля ввода
+                document.querySelectorAll('.alg-input').forEach(input => {
+                    if (input.type === 'checkbox') input.checked = false;
+                    else input.value = '';
+                });
+            }
+        });
+
+        // ==================== БЫСТРЫЙ СТАРТ ====================
+        function startClinicalPathway() {
+            const species = document.getElementById('qsSpecies').value;
+            const weight = parseFloat(document.getElementById('qsWeight').value);
+            const critical = document.getElementById('qsCritical').value === 'yes';
+            const problem = document.getElementById('qsProblem').value;
+            
+            if (!weight || weight <= 0) {
+                alert('Введите корректную массу тела');
+                return;
+            }
+            
+            state.patient.species = species;
+            state.patient.weight = weight;
+            state.patient.critical = critical;
+            state.patient.problem = problem;
+            
+            updatePatientPanel();
+            navigateTo('algorithm');
+            
+            // Заполнить поля алгоритма
+            document.getElementById('algSpecies').value = species;
+            document.getElementById('algWeight').value = weight;
+        }
+
+        // ==================== ПАЦИЕНТ ПАНЕЛЬ ====================
+        function updatePatientPanel() {
+            const p = state.patient;
+            
+            document.getElementById('pSpecies').textContent = 
+                p.species === 'dog' ? '🐕 Собака' : 
+                p.species === 'cat' ? '🐱 Кошка' : '—';
+            
+            document.getElementById('pWeight').textContent = 
+                p.weight ? `${p.weight} кг` : '—';
+            
+            // Обновить риски и рекомендации
+            updateRisks();
+        }
+
+        function updateRisks() {
+            const p = state.patient;
+            const labs = p.labs;
+            
+            // Риск гипоперфузии
+            let perfusionRisk = 10;
+            if (p.signs.hypoperfusion) perfusionRisk = 80;
+            if (labs.k && labs.k > 6.5) perfusionRisk += 20;
+            document.getElementById('riskPerfusion').style.width = `${Math.min(perfusionRisk, 100)}%`;
+            document.getElementById('riskPerfusion').className = 
+                `risk-fill ${perfusionRisk > 60 ? 'risk-high' : perfusionRisk > 30 ? 'risk-medium' : 'risk-low'}`;
+            
+            // Риск неврологических осложнений
+            let neuroRisk = 10;
+            if (labs.na) {
+                if (labs.na < 120 || labs.na > 165) neuroRisk = 80;
+                else if (labs.na < 130 || labs.na > 160) neuroRisk = 50;
+            }
+            if (p.signs.neuro) neuroRisk = Math.max(neuroRisk, 70);
+            document.getElementById('riskNeuro').style.width = `${Math.min(neuroRisk, 100)}%`;
+            document.getElementById('riskNeuro').className = 
+                `risk-fill ${neuroRisk > 60 ? 'risk-high' : neuroRisk > 30 ? 'risk-medium' : 'risk-low'}`;
+            
+            // Риск аритмии
+            let arrhythmiaRisk = 10;
+            if (labs.k) {
+                if (labs.k > 7.5 || labs.k < 2.5) arrhythmiaRisk = 90;
+                else if (labs.k > 6.5 || labs.k < 3.0) arrhythmiaRisk = 60;
+            }
+            if (labs.ca && labs.ca < 0.8) arrhythmiaRisk += 20;
+            document.getElementById('riskArrhythmia').style.width = `${Math.min(arrhythmiaRisk, 100)}%`;
+            document.getElementById('riskArrhythmia').className = 
+                `risk-fill ${arrhythmiaRisk > 60 ? 'risk-high' : arrhythmiaRisk > 30 ? 'risk-medium' : 'risk-low'}`;
+            
+            // Риск перегрузки
+            let overloadRisk = 10;
+            if (p.species === 'cat') overloadRisk += 20;
+            if (p.signs.oliguria || p.signs.anuria) overloadRisk += 40;
+            if (labs.creatinine && labs.creatinine > 400) overloadRisk += 20;
+            document.getElementById('riskOverload').style.width = `${Math.min(overloadRisk, 100)}%`;
+            document.getElementById('riskOverload').className = 
+                `risk-fill ${overloadRisk > 60 ? 'risk-high' : overloadRisk > 30 ? 'risk-medium' : 'risk-low'}`;
+            
+            // Красные флаги
+            const flags = [];
+            if (labs.k && labs.k > 7.5) flags.push('Тяжёлая гиперкалиемия!');
+            if (labs.na && (labs.na < 120 || labs.na > 165)) flags.push('Критическая диснатриемия!');
+            if (p.signs.hypoperfusion) flags.push('Гипоперфузия требует ресусцитации');
+            if ((p.signs.oliguria || p.signs.anuria) && p.signs.hypoperfusion) 
+                flags.push('Олигурия + гипоперфузия — высокий риск');
+            
+            const redFlagsEl = document.getElementById('redFlags');
+            if (flags.length > 0) {
+                redFlagsEl.style.display = 'block';
+                document.getElementById('redFlagText').textContent = flags.join('; ');
+            } else {
+                redFlagsEl.style.display = 'none';
+            }
+            
+            // Главные проблемы
+            const problems = [];
+            if (p.signs.hypoperfusion) problems.push('<strong>Гипоперфузия</strong> — приоритет №1');
+            if (labs.k && labs.k > 6.5) problems.push(`<strong>Гиперкалиемия</strong> (${labs.k} ммоль/л)`);
+            if (labs.k && labs.k < 3.0) problems.push(`<strong>Гипокалиемия</strong> (${labs.k} ммоль/л)`);
+            if (labs.na && labs.na < 130) problems.push(`<strong>Гипонатриемия</strong> (${labs.na} ммоль/л)`);
+            if (labs.na && labs.na > 155) problems.push(`<strong>Гипернатриемия</strong> (${labs.na} ммоль/л)`);
+            if (labs.ca && labs.ca < 0.9) problems.push('<strong>Гипокальциемия</strong>');
+            
+            document.getElementById('mainProblems').innerHTML = problems.length > 0 ?
+                problems.map(p => `<li class="action-item">${p}</li>`).join('') :
+                '<li class="action-item">Нет активных данных</li>';
+            
+            // Рекомендации
+            const actions = [];
+            if (p.signs.hypoperfusion) actions.push('<strong>1.</strong> Начать ресусцитацию изотоническим кристаллоидом');
+            if (labs.k && labs.k > 7.5) actions.push('<strong>1.</strong> ЭКГ + кальция глюконат немедленно');
+            if (labs.k && labs.k > 6.5 && labs.k <= 7.5) actions.push('<strong>1.</strong> ЭКГ, рассмотреть инсулин+декстроза');
+            if (labs.k && labs.k < 3.0) actions.push('<strong>1.</strong> Добавить KCl в инфузию (до 0.5 ммоль/кг/ч)');
+            if (labs.na && Math.abs(labs.na - 145) > 15) actions.push('<strong>1.</strong> Медленная коррекция Na⁺ (≤0.5 ммоль/л/ч)');
+            if (labs.ca && labs.ca < 0.8) actions.push('<strong>1.</strong> Кальция глюконат при симптомах');
+            if (actions.length === 0) actions.push('Введите данные для рекомендаций');
+            
+            document.getElementById('actionItems').innerHTML = actions.map(a => `<li class="action-item">${a}</li>`).join('');
+        }
+
+        function togglePatientPanel() {
+            document.getElementById('patientPanel').classList.toggle('expanded');
+        }
+
+        // ==================== АЛГОРИТМ ====================
+        function runAlgorithm() {
+            // Сбор данных
+            state.patient.species = document.getElementById('algSpecies').value;
+            state.patient.weight = parseFloat(document.getElementById('algWeight').value);
+            
+            state.patient.signs = {
+                hypoperfusion: document.getElementById('algHypoperfusion').checked,
+                vomiting: document.getElementById('algVomiting').checked,
+                diarrhea: document.getElementById('algDiarrhea').checked,
+                polyuria: document.getElementById('algPolyuria').checked,
+                oliguria: document.getElementById('algOliguria').checked,
+                anuria: document.getElementById('algAnuria').checked,
+                obstruction: document.getElementById('algObstruction').checked,
+                effusion: document.getElementById('algEffusion').checked,
+                tachypnea: document.getElementById('algTachypnea').checked,
+                neuro: document.getElementById('algNeuro').checked
+            };
+            
+            state.patient.labs = {
+                na: parseFloat(document.getElementById('algNa').value) || null,
+                k: parseFloat(document.getElementById('algK').value) || null,
+                cl: parseFloat(document.getElementById('algCl').value) || null,
+                ca: parseFloat(document.getElementById('algCa').value) || null,
+                mg: parseFloat(document.getElementById('algMg').value) || null,
+                p: parseFloat(document.getElementById('algP').value) || null,
+                glucose: parseFloat(document.getElementById('algGlucose').value) || null,
+                creatinine: parseFloat(document.getElementById('algCreatinine').value) || null,
+                ph: parseFloat(document.getElementById('algPh').value) || null,
+                hco3: parseFloat(document.getElementById('algHco3').value) || null
+            };
+            
+            updatePatientPanel();
+            
+            // Анализ
+            const output = analyzePatient();
+            document.getElementById('algorithmOutput').innerHTML = output;
+            document.getElementById('algorithmResult').style.display = 'block';
+        }
+
+        function analyzePatient() {
+            const p = state.patient;
+            const labs = p.labs;
+            const signs = p.signs;
+            
+            let html = '';
+            
+            // 1. Что наиболее вероятно происходит
+            html += '<div class="card-title">🔍 Что наиболее вероятно происходит</div>';
+            html += '<div class="card-content"><ul style="margin-left: 20px;">';
+            
+            if (signs.hypoperfusion) {
+                html += '<li class="text-danger"><strong>Гипоперфузия/шок</strong> — требует немедленной ресусцитации</li>';
+            }
+            if (signs.obstruction || signs.anuria) {
+                html += '<li class="text-danger"><strong>Обструкция/анурия</strong> — механическое препятствие или ОПП</li>';
+            }
+            if (labs.k && labs.k > 6.5) {
+                html += `<li class="text-danger"><strong>Гиперкалиемия</strong> (${labs.k} ммоль/л) — риск аритмии</li>`;
+            }
+            if (signs.vomiting && labs.cl && labs.cl < 100) {
+                html += '<li><strong>Гипохлоремический алкалоз</strong> — потери HCl с рвотой</li>';
+            }
+            if (labs.na && labs.na > 155) {
+                html += `<li><strong>Гипернатриемия</strong> (${labs.na} ммоль/л) — дефицит свободной воды</li>`;
+            }
+            if (labs.na && labs.na < 130) {
+                html += `<li><strong>Гипонатриемия</strong> (${labs.na} ммоль/л) — возможен Аддисон</li>`;
+            }
+            if (labs.glucose && labs.glucose > 15 && labs.hco3 && labs.hco3 < 15) {
+                html += '<li class="text-warning"><strong>Подозрение на ДКА</strong> — проверить кетоны</li>';
+            }
+            
+            html += '</ul></div>';
+            
+            // 2. Что делать в первую очередь
+            html += '<div class="card-title mt-4">🎯 Что делать в первую очередь</div>';
+            html += '<div class="card-content"><ol style="margin-left: 20px;">';
+            
+            if (signs.hypoperfusion) {
+                html += '<li><strong>Ресусцитация:</strong> изотонический кристаллоид болюс 10-20 мл/кг, переоценка через 15 мин</li>';
+            }
+            if (labs.k && labs.k > 7.5) {
+                html += '<li class="text-danger"><strong>ЭКГ + кальция глюконат</strong> 10% 0.5-1 мл/кг медленно (10 мин)</li>';
+                html += '<li><strong>Инсулин+декстроза:</strong> инсулин 0.5 ЕД/кг + декстроза 2 мл/кг 50%</li>';
+            } else if (labs.k && labs.k > 6.5) {
+                html += '<li><strong>ЭКГ</strong>, рассмотреть инсулин+декстроза</li>';
+            }
+            if (signs.obstruction) {
+                html += '<li><strong>Декомпрессия</strong> мочевого пузыря/устранение обструкции</li>';
+            }
+            if (labs.na && Math.abs(labs.na - 145) > 15) {
+                html += '<li><strong>Медленная коррекция Na⁺</strong> — максимум 0.5 ммоль/л/ч</li>';
+            }
+            if (labs.ca && labs.ca < 0.8 && signs.neuro) {
+                html += '<li><strong>Кальция глюконат</strong> при симптомной гипокальциемии</li>';
+            }
+            
+            html += '</ol></div>';
+            
+            // 3. Что нужно проверить срочно
+            html += '<div class="card-title mt-4">📋 Что нужно проверить срочно</div>';
+            html += '<div class="card-content"><ul style="margin-left: 20px;">';
+            
+            if (labs.k && labs.k > 6) {
+                html += '<li><strong>ЭКГ</strong> — непрерывный мониторинг</li>';
+            }
+            if (signs.hypoperfusion) {
+                html += '<li><strong>Лактат, PCV/TS</strong> — оценка перфузии</li>';
+            }
+            if (labs.glucose && labs.glucose > 15) {
+                html += '<li><strong>Кетоны крови/мочи</strong> — исключение ДКА</li>';
+            }
+            if (labs.na && labs.na < 130 && labs.k && labs.k > 5.5) {
+                html += '<li><strong>ACTH-стимуляция</strong> — подозрение на гипоадренокортицизм</li>';
+            }
+            if (signs.oliguria || signs.anuria) {
+                html += '<li><strong>УЗИ почек и мочевого пузыря</strong> — исключение обструкции</li>';
+            }
+            
+            html += '</ul></div>';
+            
+            // 4. Какие ошибки наиболее опасны
+            html += '<div class="card-title mt-4">⚠️ Какие ошибки наиболее опасны</div>';
+            html += '<div class="warning-box">';
+            
+            const errors = [];
+            if (labs.na && Math.abs(labs.na - 145) > 15) {
+                errors.push('Слишком быстрая коррекция натрия → риск осмотической демиелинизации или отёка мозга');
+            }
+            if (labs.k && labs.k > 6.5 && !signs.hypoperfusion) {
+                errors.push('Инфузия растворов с калием при гиперкалиемии');
+            }
+            if (signs.oliguria || signs.anuria) {
+                errors.push('Продолжение агрессивной инфузии при олигурии → перегрузка');
+            }
+            if (labs.ca && labs.ca < 0.9) {
+                errors.push('Игнорирование магния при рефрактерной гипокальциемии');
+            }
+            if (signs.effusion || signs.tachypnea) {
+                errors.push('Дальнейшее увеличение объёма при признаках перегрузки');
+            }
+            
+            if (errors.length > 0) {
+                html += errors.map(e => `<div class="warning-text">• ${e}</div>`).join('');
+            } else {
+                html += '<div class="warning-text">Следуйте стандартным протоколам</div>';
+            }
+            
+            html += '</div>';
+            
+            // 5. Какие разделы открыть
+            html += '<div class="card-title mt-4">📖 Какие разделы открыть</div>';
+            html += '<div class="card-content"><p>';
+            
+            const sections = [];
+            if (labs.na) sections.push('<a href="#" onclick="navigateTo(\'guide\')" class="text-accent">Натрий</a>');
+            if (labs.k) sections.push('<a href="#" onclick="navigateTo(\'guide\')" class="text-accent">Калий</a>');
+            if (labs.cl) sections.push('<a href="#" onclick="navigateTo(\'guide\')" class="text-accent">Хлор</a>');
+            if (labs.ca) sections.push('<a href="#" onclick="navigateTo(\'guide\')" class="text-accent">Кальций</a>');
+            if (signs.hypoperfusion) sections.push('<a href="#" onclick="navigateTo(\'guide\')" class="text-accent">Гипоперфузия</a>');
+            if (signs.effusion || signs.tachypnea) sections.push('<a href="#" onclick="navigateTo(\'overload\')" class="text-accent">Перегрузка</a>');
+            
+            html += sections.length > 0 ? sections.join(', ') : 'Все разделы руководства';
+            html += '</p></div>';
+            
+            return html;
+        }
+
+        // ==================== КАЛЬКУЛЯТОРЫ ====================
+        function calcWaterBalance() {
+            const inputs = parseFloat(document.getElementById('wbInputs').value) || 0;
+            const outputs = parseFloat(document.getElementById('wbOutputs').value) || 0;
+            const balance = inputs - outputs;
+            
+            const resultEl = document.getElementById('wbResult');
+            const valueEl = document.getElementById('wbValue');
+            const interpEl = document.getElementById('wbInterpretation');
+            
+            valueEl.textContent = `${balance >= 0 ? '+' : ''}${balance} мл`;
+            
+            if (balance > 500) {
+                valueEl.className = 'result-value text-danger';
+                interpEl.textContent = 'Выраженный положительный баланс — риск перегрузки';
+            } else if (balance > 0) {
+                valueEl.className = 'result-value text-warning';
+                interpEl.textContent = 'Умеренный положительный баланс';
+            } else if (balance < -500) {
+                valueEl.className = 'result-value text-danger';
+                interpEl.textContent = 'Выраженный отрицательный баланс — риск дегидратации';
+            } else {
+                valueEl.className = 'result-value text-success';
+                interpEl.textContent = 'Сбалансированный водный баланс';
+            }
+            
+            resultEl.classList.add('show');
+        }
+
+        function calcFreeWaterDeficit() {
+            const weight = parseFloat(document.getElementById('fwdWeight').value);
+            const naCurrent = parseFloat(document.getElementById('fwdNa').value);
+            const naNorm = parseFloat(document.getElementById('fwdNaNorm').value) || 145;
+            
+            if (!weight || !naCurrent) {
+                alert('Введите массу и текущий Na⁺');
+                return;
+            }
+            
+            const deficit = 0.6 * weight * ((naCurrent / naNorm) - 1);
+            
+            const resultEl = document.getElementById('fwdResult');
+            const valueEl = document.getElementById('fwdValue');
+            const interpEl = document.getElementById('fwdInterpretation');
+            
+            valueEl.textContent = `${deficit >= 0 ? '+' : ''}${deficit.toFixed(1)} л`;
+            
+            if (deficit > 0) {
+                valueEl.className = 'result-value text-danger';
+                interpEl.textContent = 'Дефицит свободной воды — требуется медленное восполнение';
+            } else {
+                valueEl.className = 'result-value text-success';
+                interpEl.textContent = 'Дефицита свободной воды нет';
+            }
+            
+            resultEl.classList.add('show');
+        }
+
+        function calcCorrectedNa() {
+            const na = parseFloat(document.getElementById('cnaNa').value);
+            const glucose = parseFloat(document.getElementById('cnaGlucose').value);
+            
+            if (!na || !glucose) {
+                alert('Введите Na⁺ и глюкозу');
+                return;
+            }
+            
+            // Формула: Na_corr = Na_meas + 1.6 * ((glucose - 5.5) / 5.5)
+            const corrected = na + 1.6 * ((glucose - 5.5) / 5.5);
+            
+            const resultEl = document.getElementById('cnaResult');
+            const valueEl = document.getElementById('cnaValue');
+            const interpEl = document.getElementById('cnaInterpretation');
+            
+            valueEl.textContent = `${corrected.toFixed(1)} ммоль/л`;
+            
+            if (Math.abs(corrected - na) > 5) {
+                interpEl.textContent = 'Значимая коррекция — используйте скорректированное значение';
+            } else {
+                interpEl.textContent = 'Коррекция незначительна';
+            }
+            
+            valueEl.className = 'result-value';
+            resultEl.classList.add('show');
+        }
+
+        function calcAnionGap() {
+            const na = parseFloat(document.getElementById('agNa').value) || 0;
+            const k = parseFloat(document.getElementById('agK').value) || 0;
+            const cl = parseFloat(document.getElementById('agCl').value) || 0;
+            const hco3 = parseFloat(document.getElementById('agHco3').value) || 0;
+            
+            if (!na || !cl || !hco3) {
+                alert('Введите все значения');
+                return;
+            }
+            
+            const ag = (na + k) - (cl + hco3);
+            
+            const resultEl = document.getElementById('agResult');
+            const valueEl = document.getElementById('agValue');
+            const interpEl = document.getElementById('agInterpretation');
+            
+            valueEl.textContent = `${ag.toFixed(1)} ммоль/л`;
+            
+            if (ag > 20) {
+                valueEl.className = 'result-value text-danger';
+                interpEl.textContent = 'Высокий AG — лактат-ацидоз, ДКА, уремия, токсины';
+            } else if (ag > 16) {
+                valueEl.className = 'result-value text-warning';
+                interpEl.textContent = 'Умеренно повышенный AG';
+            } else if (ag < 10) {
+                valueEl.className = 'result-value text-warning';
+                interpEl.textContent = 'Низкий AG — гипоальбуминемия, парапротеины';
+            } else {
+                valueEl.className = 'result-value text-success';
+                interpEl.textContent = 'Нормальный AG (12-20 ммоль/л)';
+            }
+            
+            resultEl.classList.add('show');
+        }
+
+        function calcCorrectedCl() {
+            const cl = parseFloat(document.getElementById('ccCl').value);
+            const na = parseFloat(document.getElementById('ccNa').value);
+            const naNorm = parseFloat(document.getElementById('ccNaNorm').value) || 145;
+            
+            if (!cl || !na) {
+                alert('Введите Cl⁻ и Na⁺');
+                return;
+            }
+            
+            const corrected = cl * (naNorm / na);
+            
+            const resultEl = document.getElementById('ccResult');
+            const valueEl = document.getElementById('ccValue');
+            const interpEl = document.getElementById('ccInterpretation');
+            
+            valueEl.textContent = `${corrected.toFixed(1)} ммоль/л`;
+            
+            if (corrected < 100) {
+                valueEl.className = 'result-value text-warning';
+                interpEl.textContent = 'Истинная гипохлоремия — возможен chloride-responsive alkalosis';
+            } else if (corrected > 115) {
+                valueEl.className = 'result-value text-warning';
+                interpEl.textContent = 'Истинная гиперхлоремия — риск гиперхлоремического ацидоза';
+            } else {
+                valueEl.className = 'result-value text-success';
+                interpEl.textContent = 'Нормальный скорректированный хлор';
+            }
+            
+            resultEl.classList.add('show');
+        }
+
+        function calcSafeNaRate() {
+            const naCurrent = parseFloat(document.getElementById('safeNaRate').value);
+            const naTarget = parseFloat(document.getElementById('safeNaTarget').value);
+            
+            if (!naCurrent || !naTarget) {
+                alert('Введите текущий и целевой Na⁺');
+                return;
+            }
+            
+            const diff = Math.abs(naTarget - naCurrent);
+            const hours = diff / 0.5; // 0.5 ммоль/л/ч макс
+            
+            const resultEl = document.getElementById('safeNaResult');
+            const valueEl = document.getElementById('safeNaValue');
+            const interpEl = document.getElementById('safeNaInterpretation');
+            
+            valueEl.textContent = `${hours.toFixed(1)} ч`;
+            interpEl.textContent = `Минимальное время для безопасной коррекции (при скорости 0.5 ммоль/л/ч)`;
+            
+            valueEl.className = 'result-value';
+            resultEl.classList.add('show');
+        }
+
+        // ==================== ЭЛЕКТРОЛИТЫ ====================
+        const electrolyteData = {
+            na: {
+                title: 'Натрий (Na⁺)',
+                content: `
+                    <div class="visualization">
+                        <svg class="viz-svg" viewBox="0 0 400 300">
+                            <!-- Внеклеточное пространство -->
+                            <ellipse cx="200" cy="150" rx="150" ry="100" fill="rgba(88, 166, 255, 0.1)" stroke="#58a6ff" stroke-width="2"/>
+                            <text x="200" y="80" text-anchor="middle" fill="#58a6ff" font-size="14">Внеклеточное пространство</text>
+                            
+                            <!-- Клетки -->
+                            <circle cx="150" cy="180" r="40" fill="rgba(63, 185, 80, 0.1)" stroke="#3fb950" stroke-width="2"/>
+                            <circle cx="250" cy="180" r="40" fill="rgba(63, 185, 80, 0.1)" stroke="#3fb950" stroke-width="2"/>
+                            <circle cx="200" cy="220" r="35" fill="rgba(63, 185, 80, 0.1)" stroke="#3fb950" stroke-width="2"/>
+                            <text x="200" y="270" text-anchor="middle" fill="#3fb950" font-size="14">Клетки</text>
+                            
+                            <!-- Ионы Na -->
+                            <circle cx="120" cy="130" r="8" fill="#58a6ff"/>
+                            <circle cx="280" cy="120" r="8" fill="#58a6ff"/>
+                            <circle cx="200" cy="100" r="8" fill="#58a6ff"/>
+                            <text x="320" y="130" fill="#58a6ff" font-size="12">Na⁺</text>
+                            
+                            <!-- Стрелки воды -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#d29922"/>
+                                </marker>
+                            </defs>
+                            <line x1="180" y1="160" x2="160" y2="170" stroke="#d29922" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <line x1="220" y1="160" x2="240" y2="170" stroke="#d29922" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="200" y="155" text-anchor="middle" fill="#d29922" font-size="11">H₂O</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гипернатриемия (>155 ммоль/л)</div>
+                        <div class="card-content">
+                            <p><strong>Патофизиология:</strong> потеря свободной воды превышает потерю натрия → внеклеточная жидкость становится гипертонической → вода выходит из клеток → клеточная дегидратация.</p>
+                            <p class="mt-2"><strong>Неврологический риск:</strong> сморщивание клеток мозга, риск сосудистого разрыва при быстрой коррекции.</p>
+                            <div class="warning-box mt-2">
+                                <div class="warning-title">Опасно</div>
+                                <div class="warning-text">Слишком быстрое снижение Na⁺ → отёк мозга. Максимум 0.5 ммоль/л/ч.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гипонатриемия (<130 ммоль/л)</div>
+                        <div class="card-content">
+                            <p><strong>Патофизиология:</strong> избыток воды относительно натрия → внеклеточная жидкость гипотоническая → вода входит в клетки → клеточный отёк.</p>
+                            <p class="mt-2"><strong>Неврологический риск:</strong> отёк мозга, особенно опасно при быстром развитии.</p>
+                            <div class="key-thought mt-2">
+                                <div class="key-thought-title">Важно</div>
+                                <div class="key-thought-text">При хронической гипонатриемии太快ое повышение Na⁺ → осмотическая демиелинизация.</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            k: {
+                title: 'Калий (K⁺)',
+                content: `
+                    <div class="visualization">
+                        <svg class="viz-svg" viewBox="0 0 400 300">
+                            <!-- Мембрана -->
+                            <rect x="50" y="100" width="300" height="100" fill="none" stroke="#58a6ff" stroke-width="3" rx="10"/>
+                            <text x="200" y="90" text-anchor="middle" fill="#58a6ff" font-size="14">Клеточная мембрана</text>
+                            
+                            <!-- Внутри клетки -->
+                            <text x="200" y="155" text-anchor="middle" fill="#3fb950" font-size="12">Внутри: K⁺ высокий</text>
+                            
+                            <!-- Снаружи -->
+                            <text x="200" y="220" text-anchor="middle" fill="#f85149" font-size="12">Снаружи: K⁺ низкий (в норме)</text>
+                            
+                            <!-- Na/K насос -->
+                            <circle cx="200" cy="150" r="25" fill="rgba(210, 153, 34, 0.2)" stroke="#d29922" stroke-width="2"/>
+                            <text x="200" y="155" text-anchor="middle" fill="#d29922" font-size="10">Na⁺/K⁺</text>
+                            
+                            <!-- ЭКГ схема -->
+                            <path d="M 280 180 L 290 180 L 295 170 L 300 180 L 310 180 L 315 150 L 320 180 L 330 180" 
+                                  fill="none" stroke="#f85149" stroke-width="2"/>
+                            <text x="305" y="195" text-anchor="middle" fill="#f85149" font-size="10">T-зубец</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гиперкалиемия (>5.5 ммоль/л)</div>
+                        <div class="card-content">
+                            <p><strong>Влияние на мембрану:</strong> деполяризация покоя → снижение возбудимости → замедление проводимости.</p>
+                            <p class="mt-2"><strong>ЭКГ-логика:</strong> высокие пики T → уплощение P → расширение QRS → синусоида → асистолия.</p>
+                            <div class="warning-box mt-2">
+                                <div class="warning-title">Шкала опасности</div>
+                                <div class="warning-text">
+                                    5.5-6.5: умеренный риск<br>
+                                    6.5-7.5: высокий риск, нужна ЭКГ<br>
+                                    >7.5: критический, немедленное лечение
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гипокалиемия (<3.5 ммоль/л)</div>
+                        <div class="card-content">
+                            <p><strong>Влияние на мембрану:</strong> гиперполяризация → снижение возбудимости → мышечная слабость.</p>
+                            <p class="mt-2"><strong>Аритмогенный риск:</strong> желудочковые аритмии, особенно при одновременной гипомагниемии.</p>
+                        </div>
+                    </div>
+                `
+            },
+            cl: {
+                title: 'Хлор (Cl⁻)',
+                content: `
+                    <div class="visualization">
+                        <svg class="viz-svg" viewBox="0 0 400 300">
+                            <!-- Весы -->
+                            <line x1="200" y1="50" x2="200" y2="100" stroke="#58a6ff" stroke-width="3"/>
+                            <line x1="120" y1="100" x2="280" y2="100" stroke="#58a6ff" stroke-width="3"/>
+                            
+                            <!-- Cl чаша -->
+                            <path d="M 100 100 L 110 180 A 30 30 0 0 0 170 180 L 180 100" fill="none" stroke="#f85149" stroke-width="2"/>
+                            <text x="140" y="150" text-anchor="middle" fill="#f85149" font-size="14">Cl⁻</text>
+                            
+                            <!-- HCO3 чаша -->
+                            <path d="M 220 100 L 230 180 A 30 30 0 0 0 290 180 L 300 100" fill="none" stroke="#3fb950" stroke-width="2"/>
+                            <text x="260" y="150" text-anchor="middle" fill="#3fb950" font-size="14">HCO₃⁻</text>
+                            
+                            <text x="200" y="220" text-anchor="middle" fill="#8b949e" font-size="12">Обратно пропорциональная связь</text>
+                            
+                            <!-- Стрелки -->
+                            <line x1="140" y1="200" x2="140" y2="240" stroke="#f85149" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <line x1="260" y1="240" x2="260" y2="200" stroke="#3fb950" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <text x="140" y="260" text-anchor="middle" fill="#f85149" font-size="10">↓ Cl⁻</text>
+                            <text x="260" y="260" text-anchor="middle" fill="#3fb950" font-size="10">↑ HCO₃⁻</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гипохлоремия и алкалоз</div>
+                        <div class="card-content">
+                            <p><strong>Chloride-responsive alkalosis:</strong> потеря HCl (рвота) → ↓ Cl⁻ → почки удерживают HCO₃⁻ для поддержания электронейтральности → метаболический алкалоз.</p>
+                            <p class="mt-2"><strong>Лечение:</strong> 0.9% NaCl + KCl для восстановления Cl⁻ и объёма.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гиперхлоремия и ацидоз</div>
+                        <div class="card-content">
+                            <p><strong>Hyperchloremic acidosis:</strong> избыток Cl⁻ (большие объёмы 0.9% NaCl) → ↑ Cl⁻ → почки выводят HCO₃⁻ → метаболический ацидоз.</p>
+                            <p class="mt-2"><strong>Профилактика:</strong> использовать сбалансированные кристаллоиды.</p>
+                        </div>
+                    </div>
+                `
+            },
+            ca: {
+                title: 'Кальций (Ca²⁺)',
+                content: `
+                    <div class="card">
+                        <div class="card-title">Фракции кальция</div>
+                        <div class="card-content">
+                            <table class="data-table">
+                                <tr><th>Фракция</th><th>Доля</th><th>Клиническое значение</th></tr>
+                                <tr><td>Ионизированный (iCa)</td><td>~55%</td><td>Биологически активный</td></tr>
+                                <tr><td>С белками</td><td>~35%</td><td>Зависит от альбумина</td></tr>
+                                <tr><td>С анионами</td><td>~10%</td><td>Комплексы с фосфатом и др.</td></tr>
+                            </table>
+                            <div class="key-thought mt-2">
+                                <div class="key-thought-title">Важно</div>
+                                <div class="key-thought-text">При гипоальбуминемии общий кальций может быть ложно занижен. Ориентируйтесь на iCa!</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гипокальциемия</div>
+                        <div class="card-content">
+                            <p><strong>Нервно-мышечная возбудимость:</strong> ↑ проницаемость мембраны для Na⁺ → спонтанные разряды → тетания.</p>
+                            <p class="mt-2"><strong>Симптомы:</strong> тремор, фасцикуляции, судороги, вентрофлексия шеи у кошек.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Гиперкальциемия</div>
+                        <div class="card-content">
+                            <p><strong>Почечный риск:</strong> вазоконстрикция + полиурия → преренальная азотемия → прямое повреждение канальцев.</p>
+                            <p class="mt-2"><strong>Произведение Ca×P:</strong> при >60 (мг²/дл²) риск минерализации тканей.</p>
+                        </div>
+                    </div>
+                `
+            },
+            mg: {
+                title: 'Магний (Mg²⁺)',
+                content: `
+                    <div class="card">
+                        <div class="card-title">Связь с калием</div>
+                        <div class="card-content">
+                            <p>Mg²⁺ необходим для работы Na⁺/K⁺-АТФазы. При дефиците магния:</p>
+                            <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                                <li>↑ выход K⁺ из клетки;</li>
+                                <li>↓ реабсорбция K⁺ в почках;</li>
+                                <li>→ рефрактерная гипокалиемия.</li>
+                            </ul>
+                            <div class="key-thought mt-2">
+                                <div class="key-thought-title">Ключевая мысль</div>
+                                <div class="key-thought-text">Рефрактерная гипокалиемия = проверь магний!</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Аритмогенный риск</div>
+                        <div class="card-content">
+                            <p>Гипомагниемия сама по себе провоцирует аритмии (torsades de pointes), а также усиливает аритмогенность гипокалиемии и гипокальциемии.</p>
+                        </div>
+                    </div>
+                `
+            },
+            p: {
+                title: 'Фосфор (P)',
+                content: `
+                    <div class="card">
+                        <div class="card-title">ATP и эритроциты</div>
+                        <div class="card-content">
+                            <p>Фосфор критичен для синтеза АТФ. При тяжёлой гипофосфатемии:</p>
+                            <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                                <li>↓ 2,3-ДФГ в эритроцитах → ↑ сродство Hb к O₂ → ткани не получают кислород;</li>
+                                <li>мышечная слабость, включая дыхательную мускулатуру;</li>
+                                <li>гемолиз.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Рефидинг и ДКА</div>
+                        <div class="card-content">
+                            <p>При начале питания после голодания или инсулина при ДКА фосфор резко уходит в клетки → тяжёлая гипофосфатемия.</p>
+                            <div class="warning-box mt-2">
+                                <div class="warning-title">Профилактика</div>
+                                <div class="warning-text">При ДКА и рефидинге мониторировать P каждые 4-6 часов и добавлять в инфузию профилактически.</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">Связь с кальцием</div>
+                        <div class="card-content">
+                            <p>Высокое произведение Ca×P (>60 мг²/дл²) → риск метастатической минерализации (почки, лёгкие, сосуды).</p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function showElectrolyte(ion) {
+            // Обновить табы
+            document.querySelectorAll('.elyte-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Показать контент
+            const data = electrolyteData[ion];
+            document.getElementById('electrolyteContent').innerHTML = `
+                <div class="section-header">
+                    <h2 class="section-title">${data.title}</h2>
+                </div>
+                ${data.content}
+            `;
+        }
+
+        // Инициализация первого электролита
+        showElectrolyte('na');
+        document.querySelector('.elyte-tab').classList.add('active');
+
+        // ==================== КЕЙСЫ ====================
+        const caseAnswers = {
+            1: {
+                correct: 1,
+                feedback: {
+                    0: 'Неверно. При K⁺ 8.2 и ЭКГ-изменениях сначала нужно стабилизировать миокард кальцием и сместить калий в клетку. Катетеризация важна, но не в первую секунду.',
+                    1: 'Верно! Кальций стабилизирует мембрану миокарда, инсулин+декстроза сдвигает K⁺ в клетку. Затем безопасная декомпрессия.',
+                    2: 'Неверно. Фуросемид неэффективен при обструкции и может усугубить дегидратацию.',
+                    3: 'Неверно. Такой объём опасен для кота 6 кг и не решает проблему гиперкалиемии.'
+                }
+            },
+            2: {
+                correct: 0,
+                feedback: {
+                    0: 'Верно! Дексаметазон не мешает ACTH-тесту, а изотоническая ресусцитация критична при гиповолемии.',
+                    1: 'Неверно. Инсулин может вызвать опасную гипогликемию. Сначала стабилизация объёма и стероиды.',
+                    2: 'Неверно. При классической картине Аддисона стероиды нужны немедленно, даже до подтверждения.',
+                    3: 'Неверно. Кальций показан при гиперкалиемии с ЭКГ-изменениями, здесь приоритет — объём и стероиды.'
+                }
+            },
+            3: {
+                correct: 0,
+                feedback: {
+                    0: 'Верно! 0.9% NaCl содержит много Cl⁻, что логично при гипохлоремическом алкалозе. + KCl для коррекции гипокалиемии.',
+                    1: 'Неверно. Сбалансированные растворы содержат меньше Cl⁻ и лактат, который метаболизируется в HCO₃⁻, усугубляя алкалоз.',
+                    2: 'Неверно. Бикарбонат усугубит алкалоз. Нужно восполнять Cl⁻ и объём.',
+                    3: 'Неверно. Гипотонические растворы опасны без контроля Na⁺ и не решают проблему Cl⁻.'
+                }
+            }
+        };
+
+        function selectCaseOption(caseNum, optionIndex) {
+            const answer = caseAnswers[caseNum];
+            const options = document.querySelectorAll(`#case${caseNum}Options .case-option`);
+            const feedback = document.getElementById(`case${caseNum}Feedback`);
+            
+            // Сброс стилей
+            options.forEach(o => {
+                o.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Выделить выбранный
+            options[optionIndex].classList.add('selected');
+            
+            // Показать правильный/неправильный
+            if (optionIndex === answer.correct) {
+                options[optionIndex].classList.add('correct');
+            } else {
+                options[optionIndex].classList.add('incorrect');
+                options[answer.correct].classList.add('correct');
+            }
+            
+            // Показать фидбек
+            feedback.innerHTML = `<div class="${optionIndex === answer.correct ? 'text-success' : 'text-danger'}"><strong>${optionIndex === answer.correct ? '✓' : '✗'}</strong> ${answer.feedback[optionIndex]}</div>`;
+            feedback.classList.add('show');
+        }
+
+        // ==================== ПЕРЕГРУЗКА ====================
+        function assessOverload() {
+            const checks = [
+                document.getElementById('olTachypnea').checked,
+                document.getElementById('olWeightGain').checked,
+                document.getElementById('olChemosis').checked,
+                document.getElementById('olEffusions').checked,
+                document.getElementById('olLowUrine').checked,
+                document.getElementById('olPositiveBalance').checked
+            ];
+            
+            const count = checks.filter(c => c).length;
+            const riskLevel = document.getElementById('overloadRiskLevel');
+            const comment = document.getElementById('overloadComment');
+            const actions = document.getElementById('overloadActions');
+            
+            if (count >= 4) {
+                riskLevel.textContent = 'Риск перегрузки: ВЫСОКИЙ';
+                riskLevel.className = 'risk-level high';
+                comment.innerHTML = '<p class="text-danger">Выраженные признаки перегрузки жидкостью. Требуется немедленная коррекция терапии.</p>';
+                actions.innerHTML = `
+                    <strong>Рекомендации:</strong>
+                    <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                        <li><strong>Остановить или резко уменьшить</strong> инфузию</li>
+                        <li>Рассмотреть <strong>кислород</strong> и <strong>диуретики</strong> (фуросемид)</li>
+                        <li>Срочная оценка POCUS (TFAST/CPOCUS)</li>
+                        <li>Мониторинг дыхания, SpO₂ каждые 30-60 мин</li>
+                        <li>Пересмотреть баланс жидкость/диурез</li>
+                    </ul>
+                `;
+            } else if (count >= 2) {
+                riskLevel.textContent = 'Риск перегрузки: СРЕДНИЙ';
+                riskLevel.className = 'risk-level medium';
+                comment.innerHTML = '<p class="text-warning">Есть признаки возможной перегрузки. Требуется внимательный мониторинг.</p>';
+                actions.innerHTML = `
+                    <strong>Рекомендации:</strong>
+                    <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                        <li><strong>Уменьшить скорость</strong> инфузии на 25-50%</li>
+                        <li>Оценить POCUS для исключения выпотов</li>
+                        <li>Мониторировать массу тела и диурез каждые 4-6 часов</li>
+                        <li>Рассмотреть переход на более консервативный план</li>
+                    </ul>
+                `;
+            } else {
+                riskLevel.textContent = 'Риск перегрузки: НИЗКИЙ';
+                riskLevel.className = 'risk-level low';
+                comment.innerHTML = '<p>На данный момент признаки перегрузки отсутствуют. Продолжайте стандартный мониторинг.</p>';
+                actions.innerHTML = `
+                    <strong>Рекомендации:</strong>
+                    <ul style="margin-left: 20px; margin-top: 8px; color: var(--text-secondary);">
+                        <li>Продолжить плановую инфузионную терапию</li>
+                        <li>Мониторировать массу тела и диурез каждые 6-12 часов</li>
+                        <li>Оценивать CRT, пульс, дыхание при каждом осмотре</li>
+                    </ul>
+                `;
+            }
+        }
+
+        // ==================== ПОИСК ====================
+        const searchIndex = [
+            { title: 'Гипоперфузия', section: 'guide', desc: 'Признаки, лечение, ресусцитация' },
+            { title: 'Гиперкалиемия', section: 'guide', desc: 'ЭКГ, лечение кальцием, инсулин' },
+            { title: 'Гипонатриемия', section: 'guide', desc: 'Аддисон, коррекция натрия' },
+            { title: 'Гипернатриемия', section: 'guide', desc: 'Дефицит воды, медленная коррекция' },
+            { title: 'Перегрузка жидкостью', section: 'overload', desc: 'Признаки, группы риска, лечение' },
+            { title: 'ДКА', section: 'cases', desc: 'Диабетический кетоацидоз, фосфор, калий' },
+            { title: 'POCUS', section: 'pocus', desc: 'AFAST, TFAST, CPOCUS, УЗИ' },
+            { title: 'Гипокальциемия', section: 'guide', desc: 'Эклампсия, тетания, iCa' },
+            { title: 'Anion Gap', section: 'calculators', desc: 'Расчёт AG, лактат-ацидоз' },
+            { title: 'Хлор', section: 'guide', desc: 'Гипохлоремия, алкалоз, 0.9% NaCl' }
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.remove('show');
+                return;
+            }
+            
+            const matches = searchIndex.filter(item => 
+                item.title.toLowerCase().includes(query) ||
+                item.desc.toLowerCase().includes(query)
+            );
+            
+            if (matches.length > 0) {
+                searchResults.innerHTML = matches.map(m => `
+                    <div class="search-result-item" onclick="navigateTo('${m.section}')">
+                        <div class="search-result-title">${m.title}</div>
+                        <div class="search-result-desc">${m.desc}</div>
+                    </div>
+                `).join('');
+                searchResults.classList.add('show');
+            } else {
+                searchResults.classList.remove('show');
+            }
+        });
+
+        // Скрыть поиск при клике вне
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-box')) {
+                searchResults.classList.remove('show');
+            }
+        });
+
+        // ==================== АККОРДЕОН ====================
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const isOpen = item.classList.contains('open');
+            
+            // Закрыть все
+            document.querySelectorAll('.accordion-item').forEach(i => {
+                i.classList.remove('open');
+            });
+            
+            // Открыть текущий если был закрыт
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        // Показать первый электролит
+        showElectrolyte('na');
+        
+        // Инициализировать панель пациента
+        updatePatientPanel();
+    </script>
+</body>
+</html>

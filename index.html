@@ -1256,6 +1256,10 @@
                     <div class="mode-knob"></div>
                 </div>
             </div>
+            <select class="action-btn" id="unitToggle" style="padding:6px 8px;">
+                <option value="si">SI units</option>
+                <option value="conv">Alt units</option>
+            </select>
             <button class="action-btn" id="printBtn">🖨️ Печать</button>
             <button class="action-btn danger" id="resetBtn">🔄 Сброс</button>
         </div>
@@ -1471,7 +1475,9 @@
 
                 <div class="card" id="algorithmResult" style="display: none;">
                     <div class="card-title">🎯 Клиническая приоритизация</div>
+                    <div class="source-card">Последнее клиническое обновление: 2026-04-08 • Основной источник: AAHA/RECOVER/IRIS consensus pathways • Рекомендация основана на: guideline + expert simplification. Инструмент не заменяет клиническое решение.</div>
                     <div class="card-content" id="algorithmOutput"></div>
+                    <div class="summary-card" id="clinicalSummary"></div>
                 </div>
             </section>
 
@@ -1950,6 +1956,10 @@
                     <div class="calc-card">
                         <div class="calc-title">⏱️ Безопасная скорость коррекции Na⁺</div>
                         <div class="calc-input-group">
+                            <label class="calc-label">Тип диснатриемии</label>
+                            <select class="calc-input" id="safeNaType"><option value="acute">Acute</option><option value="chronic">Chronic</option></select>
+                        </div>
+                        <div class="calc-input-group">
                             <label class="calc-label">Na⁺ текущий (ммоль/л)</label>
                             <input type="number" class="calc-input" id="safeNaRate" step="0.1">
                         </div>
@@ -1957,6 +1967,7 @@
                             <label class="calc-label">Na⁺ целевой (ммоль/л)</label>
                             <input type="number" class="calc-input" id="safeNaTarget" step="0.1">
                         </div>
+                        <label class="qs-label"><input type="checkbox" id="safeNaNeuro"> Неврологические признаки при гипонатриемии (emergency-mode)</label>
                         <button class="calc-btn" onclick="calcSafeNaRate()">Рассчитать</button>
                         <div class="calc-result" id="safeNaResult">
                             <div class="result-value" id="safeNaValue"></div>
@@ -2274,6 +2285,30 @@
                     </div>
                 </div>
 
+
+
+                <div class="card mt-4">
+                    <div class="card-title">📈 Fluid Overload Dashboard</div>
+                    <div class="card-content">
+                        <div class="module-grid">
+                            <div class="module-card">
+                                <label class="qs-label"><input type="checkbox" id="foHighRisk"> High-risk patient</label>
+                                <label class="qs-label mt-2">ЧДД (в мин)</label><input class="qs-input" type="number" id="foRR" value="28">
+                                <label class="qs-label mt-2">Масса baseline (кг)</label><input class="qs-input" type="number" id="foWeightBase" value="4.0" step="0.1">
+                                <label class="qs-label mt-2">Масса текущая (кг)</label><input class="qs-input" type="number" id="foWeightNow" value="4.2" step="0.1">
+                            </div>
+                            <div class="module-card">
+                                <label class="qs-label">Ввод (мл/24ч)</label><input class="qs-input" type="number" id="foIn" value="620">
+                                <label class="qs-label mt-2">Вывод (мл/24ч)</label><input class="qs-input" type="number" id="foOut" value="350">
+                                <label class="qs-label mt-2"><input type="checkbox" id="foBLines"> B-lines</label>
+                                <label class="qs-label mt-2"><input type="checkbox" id="foEffusion"> Выпоты</label>
+                                <label class="qs-label mt-2"><input type="checkbox" id="foCava"> Cava intolerance pattern</label>
+                            </div>
+                        </div>
+                        <button class="calc-btn" onclick="updateOverloadDashboard()">Оценить риск перегрузки</button>
+                        <div class="summary-card" id="foDashboardResult">Мониторинг: ЧДД q1-2ч, масса 2-3 раза/сутки, баланс каждый цикл, reassess после каждого вмешательства.</div>
+                    </div>
+                </div>
                 <div class="card mt-4">
                     <div class="card-title">🎯 Группы особого риска</div>
                     <div class="card-content">
@@ -2426,7 +2461,7 @@
                     <div class="cheat-grid">
                         <div class="cheat-item">
                             <div class="cheat-item-title">🚨 Гиповолемия</div>
-                            <div class="cheat-item-content">Сначала перфузия, потом тонкая коррекция электролитов. Изотонические кристаллоиды болюсами по 10-20 мл/кг с переоценкой.</div>
+                            <div class="cheat-item-content">Species-specific bolus: кошки 5-10 мл/кг, собаки 15-20 мл/кг buffered isotonic crystalloid за 15-30 мин. Reassess после каждого болюса; maintenance/hypotonic не для лечения гиповолемии.</div>
                         </div>
 
                         <div class="cheat-item">
@@ -2573,7 +2608,8 @@
                 labs: {},
                 signs: {}
             },
-            currentSection: 'home'
+            currentSection: 'home',
+            units: 'si'
         };
 
         // ==================== НАВИГАЦИЯ ====================
@@ -2643,6 +2679,11 @@
         // ==================== ПЕЧАТЬ ====================
         document.getElementById('printBtn').addEventListener('click', () => {
             window.print();
+        });
+
+        const unitToggle = document.getElementById('unitToggle');
+        if (unitToggle) unitToggle.addEventListener('change', (e) => {
+            state.units = e.target.value;
         });
 
         // ==================== СБРОС ====================
@@ -2793,6 +2834,49 @@
             document.getElementById('actionItems').innerHTML = actions.map(a => `<li class="action-item">${a}</li>`).join('');
         }
 
+
+        function updateClinicalSummaryCard() {
+            const p = state.patient;
+            const labs = p.labs || {};
+            const signs = p.signs || {};
+            const problems = [];
+            const avoid = [];
+            const monitor = [];
+
+            if (signs.hypoperfusion) problems.push('Гипоперфузия/шок');
+            if (labs.k && labs.k > 6.5) problems.push(`Тяжёлая гиперкалиемия (${labs.k})`);
+            if (labs.na && (labs.na < 130 || labs.na > 155)) problems.push(`Диснатриемия (${labs.na})`);
+            if (signs.obstruction) problems.push('Подозрение на уретральную обструкцию');
+            if (signs.effusion || signs.tachypnea) avoid.push('Повторные болюсы без reassessment fluid intolerance');
+            if (signs.hypoperfusion && (labs.na < 130 || labs.na > 155)) avoid.push('Медленная коррекция Na до восстановления объёма');
+
+            monitor.push('Perfusion reassess после каждого болюса');
+            if (labs.na && (labs.na < 130 || labs.na > 155)) monitor.push('Na recheck q4-6h');
+            if (labs.k && labs.k > 5.8) monitor.push('K/ECG recheck через 1-2h');
+            if (labs.glucose && labs.glucose > 12) monitor.push('Glucose recheck через 1-2h');
+
+            const immediateThreat = problems[0] || 'Критическая угроза не выделена';
+            const nextStep = signs.hypoperfusion ? `Species bolus: ${p.species === 'cat' ? '5-10 мл/кг' : '15-20 мл/кг'} buffered isotonic crystalloid за 15-30 мин` : 'Уточнить ведущую проблему и начать targeted therapy';
+            const redFlags = ['судороги', 'анурия', 'одышка', 'выраженная гипотензия', 'hypertensive crisis'];
+
+            const card = document.getElementById('clinicalSummary');
+            if (!card) return;
+            card.innerHTML = `
+                <div class="card-title">🧭 Clinical summary card</div>
+                <div><strong>Проблемы:</strong> ${problems.length ? problems.join(', ') : 'недостаточно данных'}</div>
+                <div class="mt-2"><strong>Немедленная угроза:</strong> ${immediateThreat}</div>
+                <div class="mt-2"><strong>Следующее действие (10-30 мин):</strong> ${nextStep}</div>
+                <div class="mt-2"><strong>Мониторинг (1-2 ч):</strong> ${monitor.join(' • ')}</div>
+                <div class="mt-2"><strong>Чего избегать:</strong> ${avoid.length ? avoid.join(' • ') : 'избегать терапии без recheck-плана'}</div>
+                <div class="mt-2 text-danger"><strong>Красные флаги:</strong> ${redFlags.join(', ')}</div>
+                <div class="mt-2">
+                    <span class="timer-chip">Na recheck q4-6h</span>
+                    <span class="timer-chip">Glucose q1-2h post insulin/dextrose</span>
+                    <span class="timer-chip">Weight/RR/Balance при overload risk</span>
+                </div>
+            `;
+        }
+
         function togglePatientPanel() {
             document.getElementById('patientPanel').classList.toggle('expanded');
         }
@@ -2835,6 +2919,7 @@
             const output = analyzePatient();
             document.getElementById('algorithmOutput').innerHTML = output;
             document.getElementById('algorithmResult').style.display = 'block';
+            updateClinicalSummaryCard();
         }
 
         function analyzePatient() {
@@ -2849,7 +2934,7 @@
             html += '<div class="card-content"><ul style="margin-left: 20px;">';
             
             if (signs.hypoperfusion) {
-                html += '<li class="text-danger"><strong>Гипоперфузия/шок</strong> — требует немедленной ресусцитации</li>';
+                html += '<li class="text-danger"><strong>Гипоперфузия/шок</strong> — приоритет: восстановление внутрисосудистого объёма, затем коррекция Na/свободной воды</li>';
             }
             if (signs.obstruction || signs.anuria) {
                 html += '<li class="text-danger"><strong>Обструкция/анурия</strong> — механическое препятствие или ОПП</li>';
@@ -3123,6 +3208,8 @@
         function calcSafeNaRate() {
             const naCurrent = parseFloat(document.getElementById('safeNaRate').value);
             const naTarget = parseFloat(document.getElementById('safeNaTarget').value);
+            const dysType = document.getElementById('safeNaType').value;
+            const neuro = document.getElementById('safeNaNeuro').checked;
             
             if (!naCurrent || !naTarget) {
                 alert('Введите текущий и целевой Na⁺');
@@ -3130,14 +3217,20 @@
             }
             
             const diff = Math.abs(naTarget - naCurrent);
-            const hours = diff / 0.5; // 0.5 ммоль/л/ч макс
+            const hourlyLimit = 0.5;
+            const dayLimit = dysType === 'chronic' ? 10 : 12;
+            const hours = diff / hourlyLimit;
+            const days = diff / dayLimit;
             
             const resultEl = document.getElementById('safeNaResult');
             const valueEl = document.getElementById('safeNaValue');
             const interpEl = document.getElementById('safeNaInterpretation');
             
-            valueEl.textContent = `${hours.toFixed(1)} ч`;
-            interpEl.textContent = `Минимальное время для безопасной коррекции (при скорости 0.5 ммоль/л/ч)`;
+            valueEl.textContent = `${hours.toFixed(1)} ч (минимум)`;
+            interpEl.innerHTML = `Макс. скорость: 0.5 мЭкв/л/ч; суточный потолок: ${dayLimit} мЭкв/л/сут; ориентировочно ${days.toFixed(1)} суток.<br>Recheck Na каждые 4-6 часов. Free water deficit = стартовая модель, не механический объём.`;
+            if (neuro && naCurrent < 130) {
+                interpEl.innerHTML += '<br><span class="text-danger"><strong>Emergency-mode:</strong> симптомная гипонатриемия — рассмотреть малые болюсы гипертонического NaCl под строгим мониторингом.</span>';
+            }
             
             valueEl.className = 'result-value';
             resultEl.classList.add('show');
@@ -3498,6 +3591,27 @@
             // Показать фидбек
             feedback.innerHTML = `<div class="${optionIndex === answer.correct ? 'text-success' : 'text-danger'}"><strong>${optionIndex === answer.correct ? '✓' : '✗'}</strong> ${answer.feedback[optionIndex]}</div>`;
             feedback.classList.add('show');
+        }
+
+
+        function updateOverloadDashboard() {
+            const highRisk = document.getElementById('foHighRisk').checked;
+            const rr = parseFloat(document.getElementById('foRR').value) || 0;
+            const w0 = parseFloat(document.getElementById('foWeightBase').value) || 0;
+            const w1 = parseFloat(document.getElementById('foWeightNow').value) || 0;
+            const ins = parseFloat(document.getElementById('foIn').value) || 0;
+            const outs = parseFloat(document.getElementById('foOut').value) || 0;
+            const bLines = document.getElementById('foBLines').checked;
+            const eff = document.getElementById('foEffusion').checked;
+            const cava = document.getElementById('foCava').checked;
+            const delta = w0 > 0 ? ((w1 - w0) / w0) * 100 : 0;
+            const balance = ins - outs;
+            const intolerance = bLines || eff || cava;
+            const risk = (highRisk ? 1 : 0) + (rr > 35 ? 1 : 0) + (delta >= 10 ? 2 : 0) + (intolerance ? 2 : 0);
+            const action = risk >= 3 ? 'Остановить/снизить fluids и переоценить немедленно.' : 'Продолжить осторожно, reassess по чекпоинтам.';
+            const res = document.getElementById('foDashboardResult');
+            if (!res) return;
+            res.innerHTML = `Δмассы: ${delta.toFixed(1)}% (порог overhydration +10%). Баланс: ${balance.toFixed(0)} мл/24ч.<br>Мониторинг: high-risk q2h, ЧДД q1-2h, масса 2-3 раза/сут, I/O каждый цикл.<br>POCUS: ${intolerance ? 'есть признаки fluid intolerance' : 'явных признаков intolerance нет'}.<br><span class="text-danger"><strong>${action}</strong></span>`;
         }
 
         // ==================== ПЕРЕГРУЗКА ====================

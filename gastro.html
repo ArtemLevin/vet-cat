@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Гастроэнтерология и гепатология мелких домашних животных</title>
+    <style>
+        :root {
+            --bg: #0b1020;
+            --panel: #121932;
+            --panel-2: #182245;
+            --text: #eaf0ff;
+            --muted: #9fb0d6;
+            --line: #2e3b6b;
+            --accent: #74c0fc;
+            --accent-2: #8ce99a;
+            --warn: #ffd166;
+            --danger: #ff8787;
+            --violet: #c0a7ff;
+            --shadow: 0 20px 60px rgba(0,0,0,.35);
+            --radius: 22px;
+            --radius-sm: 14px;
+            --max: 1480px;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+            radial-gradient(circle at top right, rgba(116,192,252,.12), transparent 26%),
+            radial-gradient(circle at top left, rgba(140,233,154,.08), transparent 22%),
+            linear-gradient(180deg, #09101e 0%, #0b1020 100%);
+            color: var(--text);
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button, input, select {
+            font: inherit;
+        }
+
+        .shell {
+            width: min(100%, var(--max));
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 20px;
+            align-items: stretch;
+            margin-bottom: 22px;
+        }
+
+        .hero-card, .panel, .sticky-card, .quiz-card, .stat-card, .term-card, .flow-step {
+            background: linear-gradient(180deg, rgba(24,34,69,.96), rgba(18,25,50,.96));
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-card {
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            right: -80px;
+            top: -80px;
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, rgba(116,192,252,.24), transparent 65%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+            font-size: 13px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 4vw, 54px);
+            line-height: 1.03;
+            margin: 0 0 14px;
+            max-width: 14ch;
+        }
+
+        .hero p {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.65;
+            margin: 0 0 18px;
+            max-width: 75ch;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 18px;
+            cursor: pointer;
+            transition: .2s ease;
+            font-weight: 700;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent), #5b8cff);
+            color: #08101c;
+        }
+
+        .btn.secondary {
+            background: rgba(255,255,255,.06);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        .hero-side {
+            padding: 22px;
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: 14px;
+        }
+
+        .mini-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: var(--accent-2);
+        }
+
+        .stat-card .label {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .toolbar {
+            position: sticky;
+            top: 10px;
+            z-index: 40;
+            display: grid;
+            grid-template-columns: 1.2fr .9fr auto;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 12px;
+            background: rgba(10,16,31,.8);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .search, .select {
+            width: 100%;
+            background: rgba(255,255,255,.06);
+            color: var(--text);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px;
+            padding: 14px 16px;
+            outline: none;
+        }
+
+        .page {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) 390px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .content {
+            display: grid;
+            gap: 18px;
+            min-width: 0;
+        }
+
+        .section {
+            padding: 22px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .section h2 {
+            margin: 0;
+            font-size: clamp(24px, 2vw, 34px);
+        }
+
+        .section .subtitle {
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 72ch;
+            margin-top: 8px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(116,192,252,.1);
+            color: var(--accent);
+            border: 1px solid rgba(116,192,252,.18);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .term-grid, .cards-2, .cards-3 {
+            display: grid;
+            gap: 14px;
+        }
+
+        .term-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+        .cards-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .cards-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+        .term-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .term-card h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+            color: white;
+        }
+
+        .term-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 14px;
+        }
+
+        .compare {
+            display: grid;
+            gap: 12px;
+        }
+
+        .compare-toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .segmented {
+            display: inline-flex;
+            background: rgba(255,255,255,.05);
+            padding: 4px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .segmented button {
+            background: transparent;
+            color: var(--muted);
+            border: 0;
+            padding: 10px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .segmented button.active {
+            background: linear-gradient(135deg, rgba(116,192,252,.22), rgba(140,233,154,.18));
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 18px;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            vertical-align: top;
+            text-align: left;
+        }
+
+        th {
+            color: white;
+            background: rgba(255,255,255,.05);
+            position: sticky;
+            top: 0;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,.025); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .02em;
+        }
+
+        .passive { background: rgba(140,233,154,.12); color: var(--accent-2); }
+        .active-b { background: rgba(255,209,102,.12); color: var(--warn); }
+        .high { background: rgba(255,135,135,.13); color: var(--danger); }
+        .violet { background: rgba(192,167,255,.14); color: var(--violet); }
+
+        .flow {
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .flow-step {
+            padding: 16px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.08);
+            position: relative;
+        }
+
+        .flow-step small {
+            display: inline-block;
+            color: var(--accent);
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .flow-step h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .flow-step ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .sticky {
+            position: sticky;
+            top: 96px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .sticky-card {
+            padding: 18px;
+        }
+
+        .sticky-card h3 {
+            margin: 0 0 12px;
+            font-size: 18px;
+        }
+
+        .sticky-card p, .sticky-card li {
+            color: var(--muted);
+            line-height: 1.55;
+            font-size: 14px;
+        }
+
+        .mini-nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .mini-nav a {
+            display: block;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.06);
+            color: var(--muted);
+            transition: .2s ease;
+        }
+
+        .mini-nav a:hover, .mini-nav a.active {
+            color: white;
+            border-color: rgba(116,192,252,.25);
+            background: rgba(116,192,252,.08);
+        }
+
+        .protocol-picker {
+            display: grid;
+            gap: 12px;
+        }
+
+        .protocol-output {
+            border-radius: 16px;
+            padding: 16px;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.07);
+            min-height: 180px;
+        }
+
+        .protocol-output h4 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .protocol-output ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .matrix {
+            overflow: auto;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .legend span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .quiz-grid {
+            display: grid;
+            gap: 14px;
+        }
+
+        .quiz-card {
+            padding: 18px;
+        }
+
+        .quiz-card h4 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .option {
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.04);
+            border-radius: 14px;
+            padding: 12px 14px;
+            cursor: pointer;
+            color: var(--text);
+            transition: .18s ease;
+            text-align: left;
+        }
+
+        .option:hover { border-color: rgba(116,192,252,.28); }
+        .option.correct { border-color: rgba(140,233,154,.45); background: rgba(140,233,154,.1); }
+        .option.wrong { border-color: rgba(255,135,135,.45); background: rgba(255,135,135,.08); }
+
+        .explain {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.04);
+            color: var(--muted);
+            display: none;
+            line-height: 1.55;
+        }
+
+        .explain.show { display: block; }
+
+        .footer {
+            margin: 28px 0 8px;
+            padding: 18px 24px;
+            color: var(--muted);
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+
+        .muted { color: var(--muted); }
+        .hidden { display: none !important; }
+        .nowrap { white-space: nowrap; }
+
+        .print-note {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 1180px) {
+            .page, .hero {
+                grid-template-columns: 1fr;
+            }
+            .sticky {
+                position: static;
+            }
+            .toolbar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .shell { padding: 14px; }
+            .section, .hero-card, .hero-side, .sticky-card { padding: 16px; }
+            th, td { padding: 10px 8px; }
+            .mini-grid { grid-template-columns: 1fr 1fr; }
+            .hero h1 { max-width: none; }
+        }
+
+        @media print {
+            body {
+                background: white;
+                color: #111;
+            }
+            .toolbar, .sticky, .hero-actions, .quiz-card button, .btn {
+                display: none !important;
+            }
+            .shell {
+                width: 100%;
+                max-width: none;
+                padding: 0;
+            }
+            .hero, .page, .content, .cards-2, .cards-3, .term-grid {
+                display: block;
+            }
+            .hero-card, .panel, .section, .term-card, .flow-step {
+                box-shadow: none;
+                background: white;
+                border: 1px solid #ddd;
+                color: #111;
+                break-inside: avoid;
+                margin-bottom: 12px;
+            }
+            .subtitle, .muted, p, li, td { color: #333 !important; }
+            th { background: #f3f3f3; color: #111; }
+            .chip, .badge { border: 1px solid #ccc; color: #111; background: #fafafa; }
+            a { color: #111; }
+        }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <section class="hero">
+        <div class="hero-card">
+            <div class="eyebrow">Ветеринарная гастроэнтерология • гепатология • диетология</div>
+            <h1>Интерактивный клинический справочник для собак и кошек</h1>
+            <p>
+                Страница превращает объёмное учебное пособие в рабочий инструмент: здесь можно быстро отличить регургитацию от рвоты,
+                локализовать диарею, распознать печёночный биохимический паттерн, подобрать базовую диетическую тактику и пройти
+                самопроверку по ключевым темам.
+            </p>
+            <div class="chips">
+                <span class="chip">Симптомы ЖКТ</span>
+                <span class="chip">Холестаз и желтуха</span>
+                <span class="chip">CCHS</span>
+                <span class="chip">Мукоцеле</span>
+                <span class="chip">Липидоз кошек</span>
+                <span class="chip">Диетотерапия</span>
+            </div>
+            <div class="hero-actions">
+                <a class="btn primary" href="#navigator">Открыть навигатор</a>
+                <button class="btn secondary" onclick="window.print()">Печать / PDF</button>
+            </div>
+        </div>
+
+        <aside class="hero-side hero-card">
+            <div class="mini-grid">
+                <div class="stat-card">
+                    <div class="value">3</div>
+                    <div class="label">Главных блока: ЖКТ, гепатобилиарная система, клиническая диетология</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">4</div>
+                    <div class="label">Механизма диареи: осмотическая, секреторная, проницаемость, моторика</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">3</div>
+                    <div class="label">Механизма гипербилирубинемии: пред-, печёночная, постпечёночная</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">5</div>
+                    <div class="label">Рутинных функциональных показателей печени в базовой биохимии</div>
+                </div>
+            </div>
+            <div class="term-card">
+                <h3>Как пользоваться страницей</h3>
+                <p>Введите симптом, заболевание, фермент или нутриент в строку поиска. Секции ниже будут мгновенно фильтроваться. Справа доступны быстрые якоря, мини-протокол и клинические акценты.</p>
+            </div>
+            <div class="print-note">Материал структурирован как учебный интерфейс и не заменяет клиническое мышление, лабораторную верификацию и действующие протоколы клиники.</div>
+        </aside>
+    </section>
+
+    <div class="toolbar" id="navigator">
+        <input id="globalSearch" class="search" type="search" placeholder="Поиск по странице: регургитация, мукоцеле, ЩФ, липидоз, гидролизат..." />
+        <select id="sectionFilter" class="select">
+            <option value="all">Показать все разделы</option>
+            <option value="gi">Только клиническая гастроэнтерология</option>
+            <option value="hepato">Только гепатобилиарная система</option>
+            <option value="diet">Только клиническая диетология</option>
+            <option value="quiz">Только самопроверка</option>
+        </select>
+        <button class="btn secondary" id="resetFilters">Сбросить</button>
+    </div>
+
+    <div class="page">
+        <main class="content">
+            <section class="panel section searchable" data-section="gi" id="gi-overview">
+                <div class="section-title">
+                    <div>
+                        <h2>Клиническая гастроэнтерология</h2>
+                        <div class="subtitle">Быстрая опора для первичного приёма: ключевые термины, отличие регургитации от рвоты, типизация диареи и сбор анамнеза.</div>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">Анамнез</span>
+                        <span class="chip">Осмотр</span>
+                        <span class="chip">Дифференциальная диагностика</span>
+                    </div>
+                </div>
+
+                <div class="term-grid">
+                    <article class="term-card">
+                        <h3>Рвота</h3>
+                        <p>Активное изгнание содержимого желудка. Обычно сопровождается тошнотой, гиперсаливацией, сокращением мышц брюшного пресса и может содержать желчь.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Регургитация</h3>
+                        <p>Пассивное изгнание содержимого пищевода. Продромальных признаков и активной работы брюшной стенки обычно нет; чаще выходит непереваренный корм цилиндрической формы.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Мелена</h3>
+                        <p>Чёрный дёгтеобразный кал, указывающий на переваренную кровь и обычно ассоциированный с кровотечением в верхних отделах ЖКТ.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Гематохезия</h3>
+                        <p>Алая кровь в кале. Чаще указывает на колит или поражение толстого кишечника, если не учитывать острую геморрагическую диарею.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Стеаторея</h3>
+                        <p>Бледный, светлый, жирный кал. Подсказывает нарушение переваривания/всасывания жиров: ЭНПЖ, SIBO, мальабсорбция, холестаз, портосистемный шунт.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Тенезмы</h3>
+                        <p>Безрезультатное и болезненное натуживание. Особенно характерны для толстокишечной диареи, колита и патологии дистальных отделов кишечника.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="gi" id="vomit-vs-regurgitation">
+                <div class="section-title">
+                    <div>
+                        <h2>Регургитация versus рвота</h2>
+                        <div class="subtitle">Это ключевая развилка топической диагностики: пищевод или желудок/кишечник. Переключатель ниже помогает быстро читать критерии в фокусе.</div>
+                    </div>
+                </div>
+
+                <div class="compare">
+                    <div class="compare-toolbar">
+                        <div class="segmented" id="focusToggle">
+                            <button class="active" data-focus="all">Все признаки</button>
+                            <button data-focus="regurg">Фокус на регургитации</button>
+                            <button data-focus="vomit">Фокус на рвоте</button>
+                        </div>
+                    </div>
+                    <div class="matrix">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Клинический признак</th>
+                                <th>Регургитация</th>
+                                <th>Рвота</th>
+                            </tr>
+                            </thead>
+                            <tbody id="regurgTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="gi" id="diarrhea-loc">
+                <div class="section-title">
+                    <div>
+                        <h2>Локализация диареи</h2>
+                        <div class="subtitle">Используйте переключатель признаков, чтобы отличить тонкокишечную диарею от толстокишечной уже на этапе анамнеза.</div>
+                    </div>
+                </div>
+
+                <div class="cards-2">
+                    <article class="term-card">
+                        <h3>Тонкокишечная диарея</h3>
+                        <p>Обычно объём стула нормальный или увеличенный, частота дефекации нормальная или слегка повышена, часто есть потеря веса, стеаторея, флатуленция и борборигмы.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Толстокишечная диарея</h3>
+                        <p>Частые дефекации малыми порциями, слизь, гематохезия, тенезмы, срочность позывов, дисхезия и нередко анальный зуд.</p>
+                    </article>
+                </div>
+
+                <div class="matrix" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Признак</th>
+                            <th>Тонкий кишечник</th>
+                            <th>Толстый кишечник</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>Частота дефекации</td><td>&lt; 3 раз/сут или слегка чаще</td><td>&gt; 3 раз/сут</td></tr>
+                        <tr><td>Объём фекалий</td><td>Нормальный или увеличенный</td><td>Малые порции</td></tr>
+                        <tr><td>Слизь</td><td>Обычно нет</td><td>Часто есть</td></tr>
+                        <tr><td>Алая кровь</td><td>Обычно нет</td><td>Часто есть</td></tr>
+                        <tr><td>Мелена</td><td>Возможна</td><td>Редко</td></tr>
+                        <tr><td>Тенезмы и срочность</td><td>Нетипично</td><td>Характерно</td></tr>
+                        <tr><td>Потеря веса</td><td>Часто</td><td>Нетипично</td></tr>
+                        <tr><td>Стеаторея</td><td>Часто</td><td>Обычно нет</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flow">
+                    <div class="flow-step">
+                        <small>Механизм 1</small>
+                        <h3>Осмотическая диарея</h3>
+                        <ul>
+                            <li>Связана с плохо перевариваемыми или плохо всасываемыми компонентами.</li>
+                            <li>Типичные причины: внезапная смена диеты, переедание, поедание мусора, ЭНПЖ, мальабсорбция, ВЗК, кишечная лимфома, лимфангиэктазия.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Механизм 2</small>
+                        <h3>Секреторная диарея</h3>
+                        <ul>
+                            <li>Чаще связана с бактериальными токсинами или особыми метаболитами.</li>
+                            <li>Причины: <i>Clostridium perfringens</i>, <i>Campylobacter</i>, <i>Salmonella</i>, продукты бактериального брожения, лямблии.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Механизм 3</small>
+                        <h3>Повышенная проницаемость слизистой</h3>
+                        <ul>
+                            <li>Потеря барьерной функции слизистой.</li>
+                            <li>Причины: язвы ЖКТ, воспаление, неоплазия, лимфангиэктазия, портальная гипертензия.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Механизм 4</small>
+                        <h3>Нарушения моторики</h3>
+                        <ul>
+                            <li>Неправильный транзит усиливает диарею и нарушает реабсорбцию.</li>
+                            <li>Причины: диетические погрешности, гипертиреоз кошек, воспаление, ишемия, инфекция, антихолинергики, перитонит, панкреатит, хирургия.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="gi" id="anamnesis">
+                <div class="section-title">
+                    <div>
+                        <h2>Алгоритм сбора анамнеза и осмотра</h2>
+                        <div class="subtitle">Ниже — готовая структура опроса владельца и физикального обследования, которую можно использовать как чек-лист на приёме.</div>
+                    </div>
+                </div>
+
+                <div class="cards-3">
+                    <article class="term-card">
+                        <h3>Общий скрининг</h3>
+                        <p>Стресс, новые животные/люди дома, поездки, антибиотики, токсины, инородное тело, вакцинация, дегельминтизация, сходные симптомы у других животных, системные признаки.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Если жалоба — рвота</h3>
+                        <p>Описать объём, цвет, кровь, желчь, запах, частоту, длительность, аппетит, уже проведённое лечение и ответ на него. Обязательно исключить регургитацию и кашель.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Если жалоба — диарея</h3>
+                        <p>Оценить фекальный балл, частоту, объём, слизь, кровь, мелену, срочность, тенезмы, длительность, периодичность, предыдущую терапию и историю дегельминтизации.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Кормление</h3>
+                        <p>Тип рациона, кратность, объём, лакомства, недавние изменения, анорексия/полифагия/пикализм, потеря массы тела, попытки диетической коррекции и их эффект.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Мелена / гематохезия</h3>
+                        <p>Уточнить НПВП, кортикостероиды, препараты висмута/салицилаты, родентициды, сырое мясо, стоматологические и респираторные источники заглатываемой крови.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Тенезмы / запор</h3>
+                        <p>Длительность, число попыток, травма таза, поедание костей/волос, дифференциация с урологическим синдромом и дизурией.</p>
+                    </article>
+                </div>
+
+                <div class="flow">
+                    <div class="flow-step">
+                        <small>Осмотр</small>
+                        <h3>Общее состояние</h3>
+                        <ul>
+                            <li>Поза: вентрофлексия у кошек может указывать на гипокалиемию; поза «молящегося» — на краниальную абдоминальную боль и панкреатит.</li>
+                            <li>Слизистые и СНК: дегидратация, гиповолемия, анемия, иктеричность, шок, коагулопатии.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Пальпация живота</small>
+                        <h3>Краеугольный этап обследования</h3>
+                        <ul>
+                            <li>Локализация боли.</li>
+                            <li>Размер, форма и консистенция печени, селезёнки, почек.</li>
+                            <li>Объёмные образования: инвагинаты, опухоли, инородные тела, увеличенные лимфоузлы.</li>
+                            <li>Наполнение толстого кишечника: констипация, мегаколон.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Ректальное исследование</small>
+                        <h3>Что не пропустить</h3>
+                        <ul>
+                            <li>Тазовые кости, простата у кобелей, полипы, неоплазии, анальные железы.</li>
+                            <li>При запоре и тенезмах этот этап может резко сократить дифференциальный ряд.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="hepato" id="hepato-overview">
+                <div class="section-title">
+                    <div>
+                        <h2>Гепатобилиарная система</h2>
+                        <div class="subtitle">Структурная логика печени и желчевыводящих путей, интерпретация ферментов, гипербилирубинемии и клинических синдромов у собак и кошек.</div>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">АЛТ / АСТ</span>
+                        <span class="chip">ЩФ / ГГТ</span>
+                        <span class="chip">Холангит</span>
+                        <span class="chip">Мукоцеле</span>
+                    </div>
+                </div>
+
+                <div class="cards-2">
+                    <article class="term-card">
+                        <h3>Ключевая анатомия</h3>
+                        <p>Желчные протоки → междольковые протоки → правый и левый печёночные протоки → общий печёночный проток → после слияния с пузырным протоком формируется общий желчный проток, открывающийся в двенадцатиперстную кишку рядом с протоком поджелудочной железы.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Функциональная идея</h3>
+                        <p>При открытом сфинктере Одди желчь поступает в кишечник. При закрытом — направляется в желчный пузырь, где концентрируется в 3–5 раз. Желчь эмульгирует жиры и участвует в экскреции холестерина и билирубина.</p>
+                    </article>
+                </div>
+
+                <div class="matrix" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Маркер</th>
+                            <th>Тип</th>
+                            <th>Клинический смысл</th>
+                            <th>Особенности</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>АЛТ</td>
+                            <td><span class="badge high">Цитолиз</span></td>
+                            <td>Маркер повреждения гепатоцитов</td>
+                            <td>Не показывает тяжесть и не определяет происхождение болезни сам по себе</td>
+                        </tr>
+                        <tr>
+                            <td>АСТ</td>
+                            <td><span class="badge high">Цитолиз</span></td>
+                            <td>Особенно полезен у кошек</td>
+                            <td>Растёт и при мышечном повреждении; интерпретировать вместе с CK</td>
+                        </tr>
+                        <tr>
+                            <td>ЩФ</td>
+                            <td><span class="badge active-b">Холестаз</span></td>
+                            <td>Ассоциирован с холестатической мембраной</td>
+                            <td>У кошек даже небольшое повышение у взрослого животного значимо</td>
+                        </tr>
+                        <tr>
+                            <td>ГГТ</td>
+                            <td><span class="badge active-b">Жёлчные пути</span></td>
+                            <td>Маркер патологии билиарного тракта</td>
+                            <td>Другие ткани у здорового животного почти не вносят вклад в сывороточную активность</td>
+                        </tr>
+                        <tr>
+                            <td>Билирубин</td>
+                            <td><span class="badge violet">Функция / холестаз</span></td>
+                            <td>Помогает оценить желтуху, обструкцию, гемолиз</td>
+                            <td>Нужно различать предпечёночную, печёночную и постпечёночную природу</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="hepato" id="bilirubin">
+                <div class="section-title">
+                    <div>
+                        <h2>Гипербилирубинемия и биохимические паттерны</h2>
+                        <div class="subtitle">Ниже — три механизма желтухи и типовые сочетания ферментов, которые помогают быстро сузить круг вероятных патологий.</div>
+                    </div>
+                </div>
+
+                <div class="cards-3">
+                    <article class="term-card">
+                        <h3>Предпечёночная</h3>
+                        <p>Чрезмерный гемолиз перегружает систему утилизации гема. Типичный пример — иммуноопосредованная гемолитическая анемия.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Печёночная</h3>
+                        <p>Повреждённая паренхима не справляется с захватом, конъюгацией и экскрецией билирубина. Возможны гепатит, липидоз, неоплазия.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Постпечёночная</h3>
+                        <p>Желчь не оттекает из-за обструкции или разрыва протока. Причины: мукоцеле, холелитиаз, внепечёночная обструкция, неоплазия.</p>
+                    </article>
+                </div>
+
+                <div class="matrix" style="margin-top:14px;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Паттерн</th>
+                            <th>АЛТ/АСТ</th>
+                            <th>ЩФ/ГГТ</th>
+                            <th>Билирубин</th>
+                            <th>Что думать в первую очередь</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Гепатоцеллюлярный</td>
+                            <td>Выраженно ↑↑↑</td>
+                            <td>Норма или умеренно ↑</td>
+                            <td>Норма / ↑</td>
+                            <td>Острый гепатит, токсическое повреждение, липидоз</td>
+                        </tr>
+                        <tr>
+                            <td>Холестатический</td>
+                            <td>Норма / умеренно ↑</td>
+                            <td>Выраженно ↑↑↑</td>
+                            <td>Выраженно ↑↑↑</td>
+                            <td>Обструкция, холангит, мукоцеле</td>
+                        </tr>
+                        <tr>
+                            <td>Смешанный</td>
+                            <td>Умеренно ↑↑</td>
+                            <td>Умеренно ↑↑</td>
+                            <td>↑↑</td>
+                            <td>Холангиогепатит, хронический гепатит с холестазом</td>
+                        </tr>
+                        <tr>
+                            <td>Снижение синтетической функции</td>
+                            <td>Необязательно высоко</td>
+                            <td>Необязательно высоко</td>
+                            <td>Вариабельно</td>
+                            <td>Цирроз, терминальная стадия: смотреть альбумин, АМК, холестерин</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="legend">
+                    <span>Важно: у кошек ЩФ и ГГТ при холестазе могут повышаться невыраженно.</span>
+                    <span>Любое повышение ЩФ у взрослой кошки требует клинического внимания.</span>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="hepato" id="syndromes">
+                <div class="section-title">
+                    <div>
+                        <h2>Ключевые синдромы и заболевания</h2>
+                        <div class="subtitle">Сконцентрированная клиническая выжимка по CCHS, холециститу, мукоцеле и печёночному липидозу.</div>
+                    </div>
+                </div>
+
+                <div class="cards-2">
+                    <article class="term-card">
+                        <h3>CCHS у кошек</h3>
+                        <p><strong>WSAVA-категории:</strong> нейтрофильный, лимфоцитарный, деструктивный и холангит, связанный с печёночными сосальщиками. Нейтрофильный холангит часто связан с восходящей бактериальной инфекцией и может быстро переходить в холангиогепатит.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Сопутствующие состояния при CCHS</h3>
+                        <p>ВЗК, панкреатит, холецистит, сепсис, желчнокаменная болезнь, внепечёночная обструкция, токсоплазмоз, трематоды, неоплазия, аномалии протоков.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Холецистит</h3>
+                        <p>Может быть септическим или асептическим, острым или хроническим, ненекротизирующим, некротизирующим, эмфизематозным. УЗИ-ориентиры: утолщённая стенка ЖП, расширение пузыря, сладж, газ, расширение общего протока.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Мукоцеле желчного пузыря у собак</h3>
+                        <p>Прогрессирующее накопление вязкой муцинозной желчи с риском ишемии, некроза, разрыва и желчного перитонита. Метод выбора для клинически значимых случаев — холецистэктомия.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Печёночный липидоз у кошек</h3>
+                        <p>Холестатический синдром на фоне глубокой анорексии. Особенно высок риск у животных с ожирением или недавним выраженным снижением аппетита. Раннее энтеральное питание — один из центральных элементов лечения.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Критическая клиническая мысль</h3>
+                        <p>Желтуха, анорексия, рвота, боль в животе и увеличение ферментов — это не диагноз, а вход в алгоритм: клиника → базовая лаборатория → визуализация → цитология/посев/биопсия по показаниям.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="hepato" id="therapy">
+                <div class="section-title">
+                    <div>
+                        <h2>Поддерживающая терапия и антибактериальные акценты</h2>
+                        <div class="subtitle">Ниже — быстрый конспект терапевтических компонентов, которые repeatedly появляются в пособии.</div>
+                    </div>
+                </div>
+
+                <div class="cards-2">
+                    <article class="term-card">
+                        <h3>Общие компоненты лечения холангита / холецистита</h3>
+                        <p>Широкоспектрные антибиотики против анаэробов и грамотрицательной кишечной флоры, урсодезоксихолевая кислота, SAMe, витамин Е, водорастворимые витамины, энтеральное питание, инфузионная терапия с коррекцией электролитов.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Важное правило</h3>
+                        <p>Антимикробную терапию начинают до операции, потому что сепсис ухудшает послеоперационную выживаемость. При подтверждённом бактериальном процессе курс может составлять 8–12 недель или до нормализации ферментов.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Первый выбор</h3>
+                        <p>Амоксициллин при <i>E. coli</i>, <i>Enterococcus</i> и анаэробах; клиндамицин как вариант для анаэробов. Препараты второго ряда: амоксициллин/клавуланат и метронидазол.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Чего избегать при тяжёлом поражении печени</h3>
+                        <p>Не использовать препараты с выраженной биотрансформацией и/или гепатотоксичностью: доксициклин, линкомицин, эритромицин, сульфаниламиды, триметоприм-сульфонамиды, хлорамфеникол.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="diet" id="diet-overview">
+                <div class="section-title">
+                    <div>
+                        <h2>Клиническая диетология</h2>
+                        <div class="subtitle">Диета в этом пособии рассматривается как активная часть лечения: поддержка гидратации, минимизация метаболических срывов, восстановление слизистой, сохранение мышечной массы и профилактика синдрома возобновления кормления.</div>
+                    </div>
+                    <div class="chips">
+                        <span class="chip">Кормить всегда</span>
+                        <span class="chip">Высокоусвояемый рацион</span>
+                        <span class="chip">MCT vs LCT</span>
+                    </div>
+                </div>
+
+                <div class="cards-2">
+                    <article class="term-card">
+                        <h3>Главный принцип</h3>
+                        <p><strong>Раннее энтеральное питание</strong> предпочтительнее голодания. Даже при рвоте голод не обязателен, если рвота контролируется и можно безопасно организовать частое питание малыми порциями.</p>
+                    </article>
+                    <article class="term-card">
+                        <h3>Чем опасно голодание</h3>
+                        <p>Снижается функция поджелудочной железы, атрофируется слизистая кишечника, замедляется опорожнение желудка, усиливаются диарея и мальабсорбция, подавляется иммунный ответ, у кошек возрастает риск печёночного липидоза.</p>
+                    </article>
+                </div>
+
+                <div class="flow">
+                    <div class="flow-step">
+                        <small>Рацион</small>
+                        <h3>Высокоусвояемый корм</h3>
+                        <ul>
+                            <li>Цель: усвояемость макронутриентов ≥ 90%.</li>
+                            <li>Снижает количество непереваренных остатков в толстой кишке и уменьшает осмотическую нагрузку, газообразование и дисбиоз.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Белок</small>
+                        <h3>Новый источник vs гидролизат</h3>
+                        <ul>
+                            <li>Новый белок: пищевая аллергия, непереносимость, ВЗК, лимфангиэктазия.</li>
+                            <li>Гидролизат: те же показания, когда нужно максимально снизить антигенность и обычно получить высокую усвояемость.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Жиры</small>
+                        <h3>Когда ограничивать жир</h3>
+                        <ul>
+                            <li>Панкреатит, риск рецидива, ЭНПЖ, лимфангиэктазия, энтеропатии с потерей белка, тяжёлые инфекции с атрофией ворсинок.</li>
+                            <li>Для собак ограничение жира обычно клинически критичнее, чем для кошек.</li>
+                        </ul>
+                    </div>
+                    <div class="flow-step">
+                        <small>Клетчатка</small>
+                        <h3>Когда клетчатки больше, а когда меньше</h3>
+                        <ul>
+                            <li>Больше: колит, клетчатко-зависимые формы, запор, безоары у кошек.</li>
+                            <li>Меньше: лёгкопереваримые диеты при ряде тонкокишечных патологий, острых гастроэнтеритах, панкреатите и состояниях, где нужно уменьшить остаток в просвете кишки.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="diet" id="fat-comparison">
+                <div class="section-title">
+                    <div>
+                        <h2>MCT против LCT</h2>
+                        <div class="subtitle">Среднецепочечные триглицериды особенно важны, когда классическое переваривание жира страдает.</div>
+                    </div>
+                </div>
+
+                <div class="matrix">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Параметр</th>
+                            <th>LCT</th>
+                            <th>MCT</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>Этапы переваривания</td><td>Около 8 этапов</td><td>Около 3 этапов</td></tr>
+                        <tr><td>Всасывание</td><td>Через лимфатическую систему в составе хиломикронов</td><td>Быстро, напрямую в портальную кровь</td></tr>
+                        <tr><td>Карнитин</td><td>Нужен для транспорта в митохондрии</td><td>Не требуется</td></tr>
+                        <tr><td>Усвояемость у здоровых собак</td><td>~96%</td><td>~94%</td></tr>
+                        <tr><td>Усвояемость при EPI</td><td>~1.3%</td><td>~77%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="legend">
+                    <span>MCT — удобный источник энергии при нарушении переваривания жира.</span>
+                    <span>Но незаменимые жирные кислоты всё равно должны поступать из LCT.</span>
+                </div>
+            </section>
+
+            <section class="panel section searchable" data-section="diet" id="diet-selector">
+                <div class="section-title">
+                    <div>
+                        <h2>Интерактивный выбор базовой диетической тактики</h2>
+                        <div class="subtitle">Мини-инструмент не заменяет полноценный рационологический расчёт, но быстро помогает выбрать направление: усвояемость, жир, белок и клетчатка.</div>
+                    </div>
+                </div>
+
+                <div class="protocol-picker cards-3">
+                    <select class="select" id="speciesSelect">
+                        <option value="dog">Собака</option>
+                        <option value="cat">Кошка</option>
+                    </select>
+                    <select class="select" id="conditionSelect">
+                        <option value="acuteGE">Острый гастроэнтерит</option>
+                        <option value="pancreatitis">Панкреатит</option>
+                        <option value="ibd">Хроническая энтеропатия / ВЗК</option>
+                        <option value="lymphangiectasia">Лимфангиэктазия / энтеропатия с потерей белка</option>
+                        <option value="hepatic">Гепатобилиарная патология</option>
+                        <option value="hepaticLipidosis">Печёночный липидоз кошек</option>
+                        <option value="constipation">Запор / колит</option>
+                    </select>
+                    <button class="btn primary" id="buildPlan">Показать тактику</button>
+                </div>
+
+                <div class="protocol-output" id="planOutput"></div>
+            </section>
+
+            <section class="panel section searchable" data-section="quiz" id="selftest">
+                <div class="section-title">
+                    <div>
+                        <h2>Самопроверка</h2>
+                        <div class="subtitle">Короткий интерактивный блок по ключевым развилкам пособия. После выбора ответа появится пояснение.</div>
+                    </div>
+                </div>
+                <div class="quiz-grid" id="quizRoot"></div>
+            </section>
+        </main>
+
+        <aside class="sticky">
+            <div class="sticky-card">
+                <h3>Быстрые разделы</h3>
+                <nav class="mini-nav" id="miniNav">
+                    <a href="#gi-overview">ЖКТ: понятия</a>
+                    <a href="#vomit-vs-regurgitation">Рвота vs регургитация</a>
+                    <a href="#diarrhea-loc">Локализация диареи</a>
+                    <a href="#anamnesis">Анамнез и осмотр</a>
+                    <a href="#hepato-overview">Ферменты печени</a>
+                    <a href="#bilirubin">Гипербилирубинемия</a>
+                    <a href="#syndromes">Синдромы</a>
+                    <a href="#therapy">Терапевтические акценты</a>
+                    <a href="#diet-overview">Диетология</a>
+                    <a href="#fat-comparison">MCT vs LCT</a>
+                    <a href="#diet-selector">Диетическая тактика</a>
+                    <a href="#selftest">Самопроверка</a>
+                </nav>
+            </div>
+
+            <div class="sticky-card">
+                <h3>Клинические акценты</h3>
+                <ul>
+                    <li>Желчь в массах практически исключает регургитацию и смещает фокус к рвоте.</li>
+                    <li>Частый малый стул со слизью и алой кровью — почти всегда сигнал в сторону толстого кишечника.</li>
+                    <li>У взрослой кошки даже небольшой рост ЩФ нельзя списывать со счетов.</li>
+                    <li>Анорексия у кошки — это всегда повод помнить о риске печёночного липидоза.</li>
+                    <li>При ЖКТ-патологии стратегия по умолчанию — не «голодать», а «кормить безопасно и рано».</li>
+                </ul>
+            </div>
+
+            <div class="sticky-card">
+                <h3>Диагностический маршрут</h3>
+                <div class="flow" style="margin-top:0;">
+                    <div class="flow-step" style="padding:12px 14px;">
+                        <small>1</small>
+                        <h3 style="font-size:16px;">Клиника</h3>
+                        <ul><li>Желтуха, рвота, анорексия, боли, гепатомегалия</li></ul>
+                    </div>
+                    <div class="flow-step" style="padding:12px 14px;">
+                        <small>2</small>
+                        <h3 style="font-size:16px;">Лаборатория</h3>
+                        <ul><li>ОАК, АЛТ, АСТ, ЩФ, ГГТ, билирубин, альбумин, холестерин, глюкоза, АМК</li></ul>
+                    </div>
+                    <div class="flow-step" style="padding:12px 14px;">
+                        <small>3</small>
+                        <h3 style="font-size:16px;">Визуализация</h3>
+                        <ul><li>УЗИ как базовый инструмент, рентген и КТ по показаниям</li></ul>
+                    </div>
+                    <div class="flow-step" style="padding:12px 14px;">
+                        <small>4</small>
+                        <h3 style="font-size:16px;">Инвазивная верификация</h3>
+                        <ul><li>Желчь на цитологию/посев, биопсия печени, лапаротомия по показаниям</li></ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="footer">
+        Учебный интерфейс по мотивам пособия по ветеринарной гастроэнтерологии, гепатологии и клинической диетологии мелких домашних животных.
+    </footer>
+</div>
+
+<script>
+    const regurgRows = [
+        {
+            feature: 'Работа мышц брюшного пресса',
+            regurg: 'Нет',
+            vomit: 'Да',
+            regurgClass: 'passive',
+            vomitClass: 'active-b'
+        },
+        {
+            feature: 'Продромальные признаки: тошнота, слюнотечение',
+            regurg: 'Обычно нет',
+            vomit: 'Обычно есть',
+            regurgClass: 'passive',
+            vomitClass: 'active-b'
+        },
+        {
+            feature: 'Желчь в массах',
+            regurg: 'Нет',
+            vomit: 'Может быть',
+            regurgClass: 'passive',
+            vomitClass: 'high'
+        },
+        {
+            feature: 'Характер процесса',
+            regurg: 'Пассивный',
+            vomit: 'Активный',
+            regurgClass: 'passive',
+            vomitClass: 'active-b'
+        },
+        {
+            feature: 'Форма масс',
+            regurg: 'Часто цилиндрический болюс непереваренного корма',
+            vomit: 'Форма нехарактерна',
+            regurgClass: 'passive',
+            vomitClass: 'active-b'
+        },
+        {
+            feature: 'Связь с кормлением',
+            regurg: 'Может вскоре после еды',
+            vomit: 'Может не зависеть от приёма корма',
+            regurgClass: 'passive',
+            vomitClass: 'active-b'
+        }
+    ];
+
+    const tableBody = document.getElementById('regurgTableBody');
+    const renderRegurgTable = (focus = 'all') => {
+        tableBody.innerHTML = regurgRows.map(row => {
+            const regurgDim = focus === 'vomit' ? ' style="opacity:.45"' : '';
+            const vomitDim = focus === 'regurg' ? ' style="opacity:.45"' : '';
+            return `
+          <tr>
+            <td>${row.feature}</td>
+            <td${regurgDim}><span class="badge ${row.regurgClass}">${row.regurg}</span></td>
+            <td${vomitDim}><span class="badge ${row.vomitClass}">${row.vomit}</span></td>
+          </tr>
+        `;
+        }).join('');
+    };
+    renderRegurgTable();
+
+    document.querySelectorAll('#focusToggle button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#focusToggle button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderRegurgTable(btn.dataset.focus);
+        });
+    });
+
+    const plans = {
+        acuteGE: {
+            dog: {
+                title: 'Острый гастроэнтерит у собаки',
+                bullets: [
+                    'Основа: высокоусвояемый рацион с частым дробным кормлением.',
+                    'Белок: хорошо перевариваемый; при подозрении на пищевую реакцию — новый белок или гидролизат.',
+                    'Жир: от умеренного до сниженного, если есть риск панкреатической вовлечённости.',
+                    'Клетчатка: низкая на старте, затем коррекция по типу стула.',
+                    'Параллельно: регидратация, контроль рвоты, мониторинг массы и стула.'
+                ]
+            },
+            cat: {
+                title: 'Острый гастроэнтерит у кошки',
+                bullets: [
+                    'Не допускать продолжительного голодания из-за риска липидоза.',
+                    'Рацион: высокоусвояемый, энергетически плотный, с частыми малыми порциями.',
+                    'Белок: качественный; при сочетанном ВЗК — новый белок или гидролизат.',
+                    'Жир: умеренный; ограничивать индивидуально, а не автоматически.',
+                    'При отказе от корма рано рассматривать вспомогательный энтеральный доступ.'
+                ]
+            }
+        },
+        pancreatitis: {
+            dog: {
+                title: 'Панкреатит у собаки',
+                bullets: [
+                    'Раннее энтеральное питание после стабилизации — предпочтительно.',
+                    'Рацион: высокоусвояемый, низкожировой или ультранизкожировой.',
+                    'Белок: умеренный, хорошо перевариваемый.',
+                    'Клетчатка: низкая, чтобы уменьшить остаток и нагрузку на ЖКТ.',
+                    'Мониторинг: переносимость корма, рвота, боль, триглицериды, риск рецидива.'
+                ]
+            },
+            cat: {
+                title: 'Панкреатит у кошки',
+                bullets: [
+                    'Не делать длительное голодание стандартной тактикой.',
+                    'Рацион: высокоусвояемый, умеренной или высокой энергетической плотности.',
+                    'Жир: ограничивать осторожно и индивидуально; для кошек это не столь универсально, как для собак.',
+                    'При сочетании с ВЗК — подумать о новом белке или гидролизате.',
+                    'Следить за аппетитом и своевременно обеспечивать энтеральное питание.'
+                ]
+            }
+        },
+        ibd: {
+            dog: {
+                title: 'Хроническая энтеропатия / ВЗК у собаки',
+                bullets: [
+                    'Высокоусвояемый рацион как база.',
+                    'Тип белка: новый источник или гидролизат.',
+                    'Жир: от низкого до умеренного, в зависимости от потери массы и стула.',
+                    'Клетчатка: обычно низкая, но отдельные пациенты могут ответить на более высокое содержание.',
+                    'Оценивать ответ в течение 2–4 недель и затем пересматривать белок/углевод.'
+                ]
+            },
+            cat: {
+                title: 'Хроническая энтеропатия / ВЗК у кошки',
+                bullets: [
+                    'Рацион: энергетически плотный и хорошо перевариваемый.',
+                    'Белок: новый или гидролизованный — ключевая точка выбора.',
+                    'Углеводы: избегать избыточного содержания, так как кошки хуже переносят их перегрузку при ВЗК.',
+                    'Жир: индивидуально, чаще умеренный.',
+                    'Сопровождать мониторингом BCS, MCS, аппетита и частоты дефекации.'
+                ]
+            }
+        },
+        lymphangiectasia: {
+            dog: {
+                title: 'Лимфангиэктазия / PLE у собаки',
+                bullets: [
+                    'Ключевой акцент: низкожировая диета.',
+                    'Белок: высококачественный, легкоусвояемый; часто рассматривают новый белок или гидролизат.',
+                    'MCT могут быть полезны как альтернативный источник энергии.',
+                    'Клетчатка: умеренно низкая, по переносимости.',
+                    'Мониторинг: альбумин, масса тела, отёки, качество стула.'
+                ]
+            },
+            cat: {
+                title: 'Лимфангиэктазия / PLE у кошки',
+                bullets: [
+                    'Подход осторожный и индивидуальный: умеренное ограничение жира по переносимости.',
+                    'Рацион должен оставаться калорийным, чтобы не провоцировать анорексию.',
+                    'Белок: новый источник или гидролизат часто уместен.',
+                    'Следить за BCS/MCS и не допускать снижения потребления пищи.',
+                    'Оценивать ответ по стулу, белкам сыворотки и общему состоянию.'
+                ]
+            }
+        },
+        hepatic: {
+            dog: {
+                title: 'Гепатобилиарная патология у собаки',
+                bullets: [
+                    'Энергетическая плотность не ниже 4.0 ккал/г сухого вещества.',
+                    'Белок обычно не ограничивают рутинно, кроме случаев печёночной энцефалопатии.',
+                    'При ПЭ: временно снизить белок до 10–15% СВ.',
+                    'Ограничить натрий при асците и портальной гипертензии.',
+                    'Поддерживать таурин, антиоксиданты, витамин Е, цинк; при стеаторее — рассмотреть MCT.'
+                ]
+            },
+            cat: {
+                title: 'Гепатобилиарная патология у кошки',
+                bullets: [
+                    'Энергетическая плотность не ниже 4.2 ккал/г сухого вещества.',
+                    'Белок обычно 30–35% СВ, а при липидозе может требоваться 30–45% СВ.',
+                    'При печёночной энцефалопатии белок временно снижают до 25–30% СВ.',
+                    'Особенно важны аргинин и таурин, а также контроль калия.',
+                    'Натрий ограничивают при асците; энтеральное питание поддерживают максимально рано.'
+                ]
+            }
+        },
+        hepaticLipidosis: {
+            dog: {
+                title: 'Печёночный липидоз характерен прежде всего для кошек',
+                bullets: [
+                    'Для собак этот сценарий не является типичным как отдельный классический синдром.',
+                    'Если нужен рацион при тяжелой гепатопатии у собаки — используйте режим «Гепатобилиарная патология».',
+                    'Сделайте упор на энергетическую плотность, переносимость и отсутствие длительного голодания.'
+                ]
+            },
+            cat: {
+                title: 'Печёночный липидоз у кошки',
+                bullets: [
+                    'Главная задача: немедленно восстановить энтеральное питание и калорийность.',
+                    'Белок: высокий, часто 30–45% СВ, с контролем аргинина и таурина.',
+                    'Поддержка: SAMe, L-карнитин, витамин Е, цианокобаламин, тиамин, витамин K по показаниям.',
+                    'Не допускать резкого перекорма у истощённых пациентов — помнить о синдроме возобновления кормления.',
+                    'Следить за калием, гидратацией, желтухой, саркопенией и динамикой аппетита.'
+                ]
+            }
+        },
+        constipation: {
+            dog: {
+                title: 'Запор / колит у собаки',
+                bullets: [
+                    'Часто уместно увеличение клетчатки, особенно смешанной по растворимости и ферментируемости.',
+                    'Рацион подбирают по ответу: нерастворимая клетчатка для объёма, умеренно ферментируемая — для SCFA.',
+                    'Обязательно оценивать гидратацию и возможность механической причины.',
+                    'При колите контролировать переносимость волокна и частоту дефекации.'
+                ]
+            },
+            cat: {
+                title: 'Запор / колит у кошки',
+                bullets: [
+                    'Клетчатка часто полезна, особенно при хроническом колите и безоарах.',
+                    'Но при снижении аппетита нельзя жертвовать энергетической плотностью рациона.',
+                    'Комбинировать питание с контролем гидратации и оценкой мегаколона / механической причины.',
+                    'Отслеживать комфорт дефекации, объём кала и общее потребление корма.'
+                ]
+            }
+        }
+    };
+
+    const output = document.getElementById('planOutput');
+    const renderPlan = () => {
+        const species = document.getElementById('speciesSelect').value;
+        const condition = document.getElementById('conditionSelect').value;
+        const data = plans[condition][species];
+        output.innerHTML = `<h4>${data.title}</h4><ul>${data.bullets.map(item => `<li>${item}</li>`).join('')}</ul>`;
+    };
+    document.getElementById('buildPlan').addEventListener('click', renderPlan);
+    renderPlan();
+
+    const quizData = [
+        {
+            q: 'Какой признак сильнее всего смещает диагноз в сторону рвоты, а не регургитации?',
+            options: ['Цилиндрическая форма непереваренного корма', 'Наличие желчи в массах', 'Появление сразу после еды', 'Отсутствие натуживания'],
+            correct: 1,
+            explain: 'Желчь появляется при вовлечении желудка/двенадцатиперстной кишки, поэтому её наличие практически исключает регургитацию и поддерживает диагноз рвоты.'
+        },
+        {
+            q: 'Какой набор наиболее типичен для толстокишечной диареи?',
+            options: ['Большой объём стула, потеря веса, стеаторея', 'Частые малые порции, слизь, тенезмы, гематохезия', 'Мелена и выраженная стеаторея', 'Нормальная частота стула и борборигмы без примесей'],
+            correct: 1,
+            explain: 'Частые дефекации малыми порциями, слизь, алая кровь и тенезмы — классический комплекс поражения толстого кишечника.'
+        },
+        {
+            q: 'Как интерпретировать небольшое повышение ЩФ у взрослой кошки?',
+            options: ['Часто клинически незначимо', 'Оценивать только вместе с АЛТ, без внимания к ЩФ', 'Считать клинически значимым и требующим внимания', 'Нормально при любом холестазе'],
+            correct: 2,
+            explain: 'У кошек период полувыведения ЩФ короткий, поэтому даже небольшое повышение у взрослого животного может быть значимым.'
+        },
+        {
+            q: 'Почему голодание особенно опасно для кошек с ЖКТ-патологией?',
+            options: ['Из-за риска печёночного липидоза', 'Потому что у них всегда развивается панкреатит', 'Потому что кошкам запрещены зондовые методы кормления', 'Потому что они не усваивают белок'],
+            correct: 0,
+            explain: 'У кошек даже короткий период выраженной анорексии может запустить печёночный липидоз, поэтому раннее энтеральное питание особенно важно.'
+        },
+        {
+            q: 'В какой клинической ситуации MCT особенно полезны?',
+            options: ['Когда требуется источник незаменимых жирных кислот', 'При нарушении переваривания жиров, например EPI или лимфангиэктазии', 'Для диагностики холестаза', 'Чтобы повысить антигенность диеты'],
+            correct: 1,
+            explain: 'MCT всасываются проще, напрямую в портальную кровь, и особенно полезны при нарушении классического переваривания/всасывания жира.'
+        }
+    ];
+
+    const quizRoot = document.getElementById('quizRoot');
+    quizRoot.innerHTML = quizData.map((item, idx) => `
+      <div class="quiz-card">
+        <h4>${idx + 1}. ${item.q}</h4>
+        <div class="options">
+          ${item.options.map((option, optIdx) => `<button class="option" data-q="${idx}" data-opt="${optIdx}">${option}</button>`).join('')}
+        </div>
+        <div class="explain" id="explain-${idx}">${item.explain}</div>
+      </div>
+    `).join('');
+
+    quizRoot.addEventListener('click', (e) => {
+        const btn = e.target.closest('.option');
+        if (!btn) return;
+        const qIndex = Number(btn.dataset.q);
+        const chosen = Number(btn.dataset.opt);
+        const data = quizData[qIndex];
+        const parent = btn.closest('.quiz-card');
+        parent.querySelectorAll('.option').forEach(el => {
+            el.disabled = true;
+            const opt = Number(el.dataset.opt);
+            if (opt === data.correct) el.classList.add('correct');
+            else if (opt === chosen) el.classList.add('wrong');
+        });
+        parent.querySelector('.explain').classList.add('show');
+    });
+
+    const searchInput = document.getElementById('globalSearch');
+    const sectionFilter = document.getElementById('sectionFilter');
+    const resetBtn = document.getElementById('resetFilters');
+    const searchable = [...document.querySelectorAll('.searchable')];
+
+    function applyFilters() {
+        const q = searchInput.value.trim().toLowerCase();
+        const section = sectionFilter.value;
+
+        searchable.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            const matchesText = !q || text.includes(q);
+            const matchesSection = section === 'all' || card.dataset.section === section;
+            card.classList.toggle('hidden', !(matchesText && matchesSection));
+        });
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    sectionFilter.addEventListener('change', applyFilters);
+    resetBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        sectionFilter.value = 'all';
+        applyFilters();
+    });
+
+    const sections = [...document.querySelectorAll('main section[id]')];
+    const navLinks = [...document.querySelectorAll('#miniNav a')];
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
+            }
+        });
+    }, { rootMargin: '-25% 0px -60% 0px', threshold: 0.1 });
+    sections.forEach(sec => observer.observe(sec));
+</script>
+</body>
+</html>
